@@ -145,15 +145,20 @@ DNHealth provides complete read/write support for the three major healthcare mes
 
 ## Installation
 
-```bash
-pip install dnhealth
-```
-
-For XML support (recommended for HL7v3 and FHIR XML):
+DNHealth is available directly from GitHub. Install using pip:
 
 ```bash
-pip install dnhealth[xml]
+pip install git+https://github.com/DNAi-inc/dnhealth.git
 ```
+
+Or clone the repository and install:
+
+```bash
+git clone https://github.com/DNAi-inc/dnhealth.git
+cd dnhealth
+pip install .
+```
+
 
 ## Quick Start
 
