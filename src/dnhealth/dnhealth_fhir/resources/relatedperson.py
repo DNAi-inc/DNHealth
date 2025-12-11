@@ -1,0 +1,89 @@
+# Copyright 2025 DNAi inc.
+
+# Dual-licensed under the DNAi Free License v1.1 and the
+# DNAi Commercial License v1.1.
+# See the LICENSE files in the project root for details.
+
+"""
+FHIR R4 RelatedPerson resource.
+
+Complete RelatedPerson resource with all R4 elements.
+"""
+
+from dataclasses import dataclass, field
+from typing import List, Optional
+from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
+
+from dnhealth.dnhealth_fhir.resources.base import FHIRResource
+from dnhealth.dnhealth_fhir.types import (
+    Extension,
+    Identifier,
+    Reference,
+    CodeableConcept,
+    HumanName,
+    ContactPoint,
+    Address,
+    Attachment,
+    Period,
+)
+
+
+@dataclass
+class RelatedPerson(FHIRResource):
+    """
+    FHIR R4 RelatedPerson resource.
+
+    Represents information about a person that is involved in the care
+    for a patient, but who is not the target of healthcare, nor has a
+    formal responsibility in the care process.
+    """
+
+    resourceType: str = "RelatedPerson"
+    # Identifiers
+    identifier: List[Identifier] = field(default_factory=list)
+    # Active
+    active: Optional[bool] = None
+    # Patient
+    patient: Reference  # The patient this person is related to (required)
+    # Relationship
+    relationship: List[CodeableConcept] = field(default_factory=list)
+    # Name
+    name: List[HumanName] = field(default_factory=list)
+    # Telecom
+    telecom: List[ContactPoint] = field(default_factory=list)
+    # Gender
+    gender: Optional[str] = None  # male | female | other | unknown
+    # Birth date
+    birthDate: Optional[str] = None  # YYYY-MM-DD
+    # Address
+    address: List[Address] = field(default_factory=list)
+    # Photo
+    photo: List[Attachment] = field(default_factory=list)
+    # Period
+    period: Optional[Period] = None
+    # Communication
+    communication: List["RelatedPersonCommunication"] = field(default_factory=list)
+
+
+@dataclass
+class RelatedPersonCommunication:
+    """
+    A language which may be used to communicate with about the patient's
+    health.
+    """
+
+    language: CodeableConcept  # The language which can be used to communicate with the patient about his or her health (required)
+    preferred: Optional[bool] = None
+    extension: List[Extension] = field(default_factory=list)
+
+
+def _log_module_initialization():
+    """Log module initialization timestamp."""
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    logger.info(f"Current Time at End of Operations: {current_time}")
+
+# Log module initialization
+_log_module_initialization()
