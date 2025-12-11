@@ -164,12 +164,6 @@ This release represents a comprehensive implementation of healthcare integration
 - **License Headers**: All source files include proper license headers
 
 ### Summary Statistics
-- **HL7v2 Tables**: 618 implemented (144.7% of official 427 tables)
-- **HL7v2 Segments**: 237 implemented (153.9% of official 154 segments)
-- **HL7v3 RIM Classes**: 6/6 (100% complete)
-- **HL7v3 Interactions**: 114/108 (105.6% complete)
-- **FHIR Resources**: 146/145 (100.7% complete)
-- **FHIR Operations**: 38/37 (102.7% complete)
 - **Overall Completion**: ~95% HL7v2, ~90% HL7v3, ~98% FHIR R4
 
 ### Next Steps
