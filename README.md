@@ -9,7 +9,7 @@ See the LICENSE files in the project root for details.
 
 # DNHealth
 
-A production-grade, pure-Python library suite for healthcare integration standards: **HL7 v2.x**, **HL7 v3**, and **FHIR R4**.
+A pure-Python library suite for healthcare integration standards: **HL7 v2.x**, **HL7 v3**, and **FHIR R4**.
 
 ## Overview
 
