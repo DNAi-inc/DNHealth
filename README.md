@@ -13,7 +13,7 @@ A production-grade, pure-Python library suite for healthcare integration standar
 
 ## Overview
 
-DNHealth provides complete read/write support for the three major healthcare messaging standards:
+DNHealth provides complete read/write support for the four major healthcare messaging standards:
 
 - **HL7 v2.x**: Parse and serialize ER7 ("pipe-delimited") messages with full support for segments, fields, components, subcomponents, repetitions, and escape sequences.
 - **HL7 v3**: Parse and serialize HL7 v3 XML messages with namespace support and full structural preservation.
@@ -161,15 +161,7 @@ DNHealth provides complete read/write support for the three major healthcare mes
 
 ## Installation
 
-<<<<<<< HEAD
 Please refer to the project documentation for installation instructions.
-=======
-DNHealth is available directly from GitHub. Install using pip:
-
-```bash
-pip install git+https://github.com/DNAi-inc/dnhealth.git
-```
->>>>>>> 5fdc6ca7407d826c294d6c38b397b2c28c88d8fb
 
 Or clone the repository and install:
 
@@ -258,6 +250,46 @@ assert patient.name[0].given[0] == "John"
 serialized = serialize_fhir_json(patient)
 ```
 
+### FHIR R5
+
+```python
+from dnhealth.dnhealth_fhir.parser_json import parse_fhir_json
+from dnhealth.dnhealth_fhir.serializer_json import serialize_fhir_json
+from dnhealth.dnhealth_fhir.version import detect_fhir_version
+
+# Parse a FHIR R5 resource (automatic version detection)
+json_string = """{
+    "resourceType": "Task",
+    "id": "example-task",
+    "status": "ready",
+    "intent": "order",
+    "code": {
+        "text": "Example task"
+    },
+    "fhirVersion": "5.0.0"
+}"""
+
+# Version is automatically detected from fhirVersion field or resource structure
+task = parse_fhir_json(json_string)
+assert task.resourceType == "Task"
+assert task.status == "ready"
+
+# Explicitly specify R5 version if needed
+from dnhealth.dnhealth_fhir.r5.resources.task import Task
+task_r5 = parse_fhir_json(json_string, Task)
+
+# Serialize back to JSON (maintains version information)
+serialized = serialize_fhir_json(task_r5)
+
+# Version-aware parsing works seamlessly with R4 resources too
+r4_patient_json = """{
+    "resourceType": "Patient",
+    "id": "example",
+    "name": [{"family": "Doe", "given": ["John"]}]
+}"""
+patient = parse_fhir_json(r4_patient_json)  # Automatically uses R4 parser
+```
+
 ## CLI Tools
 
 ### hl7v2tool
@@ -319,12 +351,13 @@ fhirtool to-xml r5-resource.json --fhir-version R5
 
 DNHealth is suitable for a wide range of healthcare integration scenarios:
 
-- **Healthcare Information Systems**: Integrate HL7v2, HL7v3, and FHIR messaging in EHR systems
+- **Healthcare Information Systems**: Integrate HL7v2, HL7v3, FHIR R4, and FHIR R5 messaging in EHR systems
 - **Interoperability Solutions**: Build bridges between different healthcare standards
-- **Data Transformation**: Convert between HL7v2, HL7v3, and FHIR formats
-- **API Development**: Create FHIR REST APIs for healthcare applications
+- **Data Transformation**: Convert between HL7v2, HL7v3, FHIR R4, and FHIR R5 formats
+- **API Development**: Create FHIR REST APIs supporting both R4 and R5 for healthcare applications
 - **Message Processing**: Parse, validate, and process healthcare messages at scale
 - **Clinical Data Exchange**: Exchange patient data, observations, and clinical documents
+- **Version Migration**: Seamlessly work with both FHIR R4 and R5 resources in the same application
 - **Terminology Services**: Validate codes, expand value sets, and translate concepts
 - **Compliance Testing**: Validate implementations against official HL7/FHIR specifications
 - **Research & Analytics**: Process healthcare data for research and analytics purposes
@@ -353,13 +386,13 @@ results = run_all_official_validations()
 
 ## Advanced Usage Examples
 
-### FHIR Operations
+### FHIR Operations (R4 and R5)
 
 ```python
 from dnhealth.dnhealth_fhir.operations import execute_operation
 from dnhealth.dnhealth_fhir.resources.parameters import Parameters, ParametersParameter
 
-# Validate a resource
+# Validate a resource (works for both R4 and R5)
 result = execute_operation("$validate", Parameters(parameter=[
     ParametersParameter(name="resource", resource=patient_resource)
 ]))
@@ -374,22 +407,26 @@ result = execute_operation("$validate-code", Parameters(parameter=[
     ParametersParameter(name="url", valueString="http://hl7.org/fhir/ValueSet/administrative-gender"),
     ParametersParameter(name="code", valueString="male")
 ]))
+
+# R5-specific operations are automatically routed based on resource version
 ```
 
-### FHIR REST API Server
+### FHIR REST API Server (R4 and R5)
 
 ```python
 from dnhealth.dnhealth_fhir.rest_server import FHIRRestServer
 
-# Create and start FHIR REST API server
+# Create and start FHIR REST API server (supports both R4 and R5)
 server = FHIRRestServer(base_path="/fhir")
 server.run(host="0.0.0.0", port=8080)
 
-# Access via standard FHIR REST endpoints:
-# GET /fhir/Patient/123
-# POST /fhir/Patient
-# GET /fhir/Patient?name=Smith
+# Access via standard FHIR REST endpoints (version-aware):
+# GET /fhir/Patient/123          # Auto-detects R4 or R5
+# POST /fhir/Patient              # Accepts R4 or R5 resources
+# GET /fhir/Patient?name=Smith    # Works with both versions
 # GET /fhir/Patient/123/$everything
+# GET /fhir/Task/456              # R5-specific resources supported
+# GET /fhir/fhirVersion           # Returns supported versions
 ```
 
 ### Cross-Standard Mapping
@@ -426,14 +463,17 @@ for message in parser.parse_file("large_messages.hl7"):
     process_message(message)
 ```
 
-### FHIRPath Expressions
+### FHIRPath Expressions (R4 and R5)
 
 ```python
 from dnhealth.dnhealth_fhir.fhirpath import evaluate_fhirpath
 
-# Evaluate FHIRPath expression
+# Evaluate FHIRPath expression (works for both R4 and R5 resources)
 result = evaluate_fhirpath(patient, "name.given.first()")
 result = evaluate_fhirpath(observation, "valueQuantity.value > 100")
+
+# R5-specific expressions work automatically with R5 resources
+result = evaluate_fhirpath(task_r5, "status = 'ready'")
 ```
 
 ## Current Coverage
