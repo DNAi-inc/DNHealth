@@ -161,7 +161,24 @@ DNHealth provides complete read/write support for the three major healthcare mes
 
 ## Installation
 
+<<<<<<< HEAD
 Please refer to the project documentation for installation instructions.
+=======
+DNHealth is available directly from GitHub. Install using pip:
+
+```bash
+pip install git+https://github.com/DNAi-inc/dnhealth.git
+```
+>>>>>>> 5fdc6ca7407d826c294d6c38b397b2c28c88d8fb
+
+Or clone the repository and install:
+
+```bash
+git clone https://github.com/DNAi-inc/dnhealth.git
+cd dnhealth
+pip install .
+```
+
 
 ## Quick Start
 
