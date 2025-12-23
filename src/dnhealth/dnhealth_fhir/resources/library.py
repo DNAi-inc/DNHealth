@@ -44,7 +44,9 @@ class Library(MetadataResource):
     # Experimental
     experimental: Optional[bool] = None  # For testing purposes (inherited from CanonicalResource)
     # Type
-    type: CodeableConcept  # logic-library | model-definition | asset-collection | module-definition (required)
+    # Note: type is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce type is provided.
+    type: Optional[CodeableConcept] = None  # logic-library | model-definition | asset-collection | module-definition (required)
     # Subject CodeableConcept
     subjectCodeableConcept: Optional[CodeableConcept] = None  # Type of individual the library content focuses on
     # Subject Reference

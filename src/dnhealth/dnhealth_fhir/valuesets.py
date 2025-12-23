@@ -90,10 +90,6 @@ FIELD_VALUE_SET_MAP: Dict[str, Dict[str, str]] = {
 }
 
 
-
-    # Log completion timestamp at end of operation
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logger.info(f"Current Time at End of Operations: {current_time}")
 def get_value_set(url: str) -> Optional[Set[str]]:
     """
     Get a value set by URL.
@@ -120,10 +116,6 @@ def is_code_in_value_set(code: str, value_set_url: str) -> bool:
     """
     value_set = get_value_set(value_set_url)
     if value_set is None:
-
-            # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
         return False
     return code in value_set
 
@@ -143,7 +135,6 @@ def validate_coding_against_value_set(coding: Coding, value_set_url: str) -> Lis
     errors = []
     
     if not coding.code:
-        # Log completion timestamp at end of operation
         completion_time = datetime.now()
         current_time = completion_time.strftime("%Y-%m-%d %H:%M:%S")
         logger.debug(f"[{current_time}] Coding validation completed (no code to validate)")
@@ -165,15 +156,6 @@ def validate_coding_against_value_set(coding: Coding, value_set_url: str) -> Lis
     elapsed = (completion_time - start_time).total_seconds()
     current_time = completion_time.strftime("%Y-%m-%d %H:%M:%S")
     logger.debug(f"[{current_time}] Coding validation completed in {elapsed:.3f} seconds ({len(errors)} errors)")
-
-        # Log completion timestamp at end of operation
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
-    
-
-    # Log completion timestamp at end of operation
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logger.info(f"Current Time at End of Operations: {current_time}")
     return errors
 
 

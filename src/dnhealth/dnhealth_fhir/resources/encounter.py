@@ -20,6 +20,7 @@ from dnhealth.dnhealth_fhir.types import (
     Reference,
     CodeableConcept,
     Period,
+    Duration,
 )
 from typing import Any
 
@@ -35,7 +36,9 @@ class Encounter(FHIRResource):
     resourceType: str = "Encounter"
     # Required fields (must come before optional fields)
     # Status
-    status: str  # planned, arrived, triaged, in-progress, onleave, finished, cancelled, entered-in-error, unknown
+    # Note: status is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # planned, arrived, triaged, in-progress, onleave, finished, cancelled, entered-in-error, unknown
     # Optional fields
     # Identifiers
     identifier: List[Identifier] = field(default_factory=list)
@@ -87,8 +90,12 @@ class Encounter(FHIRResource):
 class EncounterStatusHistory:
     """Status history for an encounter."""
 
-    status: str
-    period: Period
+    # Note: status is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce status is provided.
+    status: Optional[str] = None
+    # Note: period is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce period is provided.
+    period: Optional[Period] = None
     extension: List[Extension] = field(default_factory=list)
 
 

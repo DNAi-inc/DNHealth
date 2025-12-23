@@ -64,7 +64,9 @@ class DeviceRequest(DomainResource):
     # Status
     status: Optional[str] = None  # draft | active | on-hold | revoked | completed | entered-in-error | unknown
     # Intent
-    intent: str  # proposal | plan | directive | order | original-order | reflex-order | filler-order | instance-order | option (required)
+    # Note: intent is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce intent is provided.
+    intent: Optional[str] = None  # proposal | plan | directive | order | original-order | reflex-order | filler-order | instance-order | option (required)
     # Priority
     priority: Optional[str] = None  # routine | urgent | asap | stat
     # Code Reference
@@ -74,7 +76,9 @@ class DeviceRequest(DomainResource):
     # Parameter
     parameter: List[DeviceRequestParameter] = field(default_factory=list)  # Specific parameters for the ordered item
     # Subject
-    subject: Reference  # Focus of request (required)
+    # Note: subject is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce subject is provided.
+    subject: Optional[Reference] = None  # Focus of request (required)
     # Encounter
     encounter: Optional[Reference] = None  # Encounter motivating request
     # Occurrence DateTime

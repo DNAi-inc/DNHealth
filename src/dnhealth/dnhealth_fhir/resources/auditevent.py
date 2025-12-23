@@ -36,7 +36,9 @@ class AuditEventAgent:
     who: Optional[Reference] = None
     altId: Optional[str] = None
     name: Optional[str] = None
-    requestor: bool  # Whether user is initiator (required)
+    # Note: requestor is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce requestor is provided.
+    requestor: Optional[bool] = None  # Whether user is initiator (required)
     location: Optional[Reference] = None
     policy: List[str] = field(default_factory=list)
     media: Optional[Coding] = None
@@ -65,7 +67,9 @@ class AuditEventSource:
     """
 
     site: Optional[str] = None
-    observer: Reference  # Identifier of the source (required)
+    # Note: observer is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce observer is provided.
+    observer: Optional[Reference] = None  # Identifier of the source (required)
     type: List[Coding] = field(default_factory=list)
     extension: List[Extension] = field(default_factory=list)
 
@@ -96,7 +100,9 @@ class AuditEventEntityDetail:
     Additional Information about the entity.
     """
 
-    type: str  # Name of the property (required)
+    # Note: type is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce type is provided.
+    type: Optional[str] = None  # Name of the property (required)
     valueString: Optional[str] = None
     valueBase64Binary: Optional[str] = None
     extension: List[Extension] = field(default_factory=list)
@@ -113,7 +119,9 @@ class AuditEvent(FHIRResource):
 
     resourceType: str = "AuditEvent"
     # Type
-    type: Coding  # Type/identifier of event (required)
+    # Note: type is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce type is provided.
+    type: Optional[Coding] = None  # Type/identifier of event (required)
     # Subtype
     subtype: List[Coding] = field(default_factory=list)
     # Action
@@ -121,7 +129,9 @@ class AuditEvent(FHIRResource):
     # Period
     period: Optional[Period] = None
     # Recorded
-    recorded: str  # Time when the event was recorded (required) - ISO 8601 instant
+    # Note: recorded is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce recorded is provided.
+    recorded: Optional[str] = None  # Time when the event was recorded (required) - ISO 8601 instant
     # Outcome
     outcome: Optional[str] = None  # 0 | 4 | 8 | 12
     # Outcome description
@@ -131,7 +141,9 @@ class AuditEvent(FHIRResource):
     # Agent
     agent: List[AuditEventAgent] = field(default_factory=list)
     # Source
-    source: AuditEventSource  # Audit Event Reporter (required)
+    # Note: source is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce source is provided.
+    source: Optional[AuditEventSource] = None  # Audit Event Reporter (required)
     # Entity
     entity: List[AuditEventEntity] = field(default_factory=list)
 

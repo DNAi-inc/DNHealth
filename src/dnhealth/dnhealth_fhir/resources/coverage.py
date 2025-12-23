@@ -80,7 +80,10 @@ class Coverage(DomainResource):
     # Identifier
     identifier: List[Identifier] = field(default_factory=list)  # Business Identifier for the coverage
     # Status
-    status: str  # active | cancelled | draft | entered-in-error (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (identifier has default value).
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # active | cancelled | draft | entered-in-error (required in FHIR)
     # Type
     type: Optional[CodeableConcept] = None  # Coverage category such as medical or accident
     # Policy Holder
@@ -90,7 +93,10 @@ class Coverage(DomainResource):
     # Subscriber ID
     subscriberId: Optional[str] = None  # ID assigned to the subscriber
     # Beneficiary
-    beneficiary: Reference  # Plan beneficiary (required)
+    # Note: beneficiary is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (subscriberId has default value).
+    # Validation should enforce beneficiary is provided.
+    beneficiary: Optional[Reference] = None  # Plan beneficiary (required in FHIR)
     # Dependent
     dependent: Optional[str] = None  # Dependent number
     # Relationship

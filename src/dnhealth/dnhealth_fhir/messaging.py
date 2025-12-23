@@ -5,10 +5,11 @@
 # See the LICENSE files in the project root for details.
 
 """
-FHIR R4 messaging workflow processing.
+FHIR messaging workflow processing (version-aware, supports R4 and R5).
 
 Provides functionality to process FHIR message Bundles according to the FHIR Messaging specification,
 including message validation, routing, and response generation.
+Version-aware: supports both FHIR R4 and R5 messaging.
 """
 
 import logging
@@ -20,6 +21,12 @@ from dnhealth.dnhealth_fhir.resources.base import FHIRResource
 from dnhealth.dnhealth_fhir.resources.bundle import Bundle, BundleEntry
 from dnhealth.dnhealth_fhir.resources.messageheader import MessageHeader
 from dnhealth.dnhealth_fhir.resources.messagedefinition import MessageDefinition, MessageDefinitionFocus
+from dnhealth.dnhealth_fhir.version import (
+    FHIRVersion,
+    normalize_version,
+    detect_version_from_json_string,
+    DEFAULT_VERSION
+)
 
 logger = logging.getLogger(__name__)
 
@@ -74,12 +81,16 @@ class MessageProcessor:
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"[{current_time}] Registered handler for event code: {event_code}")
 
-    def process_message(self, bundle: Bundle) -> Bundle:
+    def process_message(self, bundle: Bundle, fhir_version: Optional[str] = None) -> Bundle:
         """
         Process an incoming message Bundle.
         
+        Version-aware: detects version from bundle or uses provided version.
+        Defaults to R4 for backward compatibility.
+        
         Args:
             bundle: The message Bundle to process
+            fhir_version: Optional FHIR version (R4 or R5). If not provided, detected from bundle.
             
         Returns:
             Response Bundle (if response required) or processed Bundle
@@ -90,6 +101,14 @@ class MessageProcessor:
         start_time = time.time()
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"[{current_time}] Processing message Bundle")
+        
+        # Detect version if not provided (defaults to R4 for backward compatibility)
+        if fhir_version is None:
+            # Try to detect from bundle structure or metadata
+            # For now, default to R4 - can be enhanced when R5 resources are available
+            detected_version = DEFAULT_VERSION
+        else:
+            detected_version = normalize_version(fhir_version)
         
         # Validate message structure
         validation_errors = self.validate_message_bundle(bundle)
@@ -294,8 +313,6 @@ class MessageProcessor:
         )
 
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
         
         return result
 

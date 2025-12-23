@@ -21,7 +21,6 @@ from dnhealth.dnhealth_fhir.types import (
     CodeableConcept,
     Period,
     ContactPoint,
-    Time,
 )
 
 

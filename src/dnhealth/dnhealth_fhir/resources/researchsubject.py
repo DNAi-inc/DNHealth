@@ -42,13 +42,20 @@ class ResearchSubject(DomainResource):
     # Identifier
     identifier: List[Identifier] = field(default_factory=list)  # Business Identifier for research subject
     # Status
-    status: str  # candidate | eligible | follow-up | ineligible | not-registered | off-study | on-study | on-study-intervention | on-study-observation | pending-on-study | potential-candidate | screening | withdrawn (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (identifier has default value).
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # candidate | eligible | follow-up | ineligible | not-registered | off-study | on-study | on-study-intervention | on-study-observation | pending-on-study | potential-candidate | screening | withdrawn (required in FHIR)
     # Period
     period: Optional[Period] = None  # Start and end of participation
     # Study
-    study: Reference  # Study subject is part of (required)
+    # Note: study is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce study is provided.
+    study: Optional[Reference] = None  # Study subject is part of (required) (required in FHIR)
     # Individual
-    individual: Reference  # Who is part of study (required)
+    # Note: individual is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce individual is provided.
+    individual: Optional[Reference] = None  # Who is part of study (required)
     # Assigned Arm
     assignedArm: Optional[str] = None  # The name of the arm in the study the subject is expected to follow
     # Actual Arm

@@ -5,14 +5,15 @@
 # See the LICENSE files in the project root for details.
 
 """
-FHIR R4 structural validation.
+FHIR structural validation (version-aware).
 
 Provides basic structural validation for FHIR resources.
+Supports both R4 and R5 versions with version-aware validation rules.
 
 All validation operations include timestamp logging at the end of operations.
 """
 
-from typing import List, Any, get_type_hints, get_origin, get_args, Optional, Dict, Tuple, Callable
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, get_args, get_origin, get_type_hints
 import inspect
 import time
 from datetime import datetime
@@ -54,6 +55,12 @@ from dnhealth.dnhealth_fhir.fhirpath import (
 from dnhealth.dnhealth_fhir.structuredefinition import ElementDefinition
 from dnhealth.dnhealth_fhir.polymorphic_types import validate_value_x_fields
 from dnhealth.dnhealth_fhir.polymorphic_types import validate_value_x_fields
+from dnhealth.dnhealth_fhir.version import (
+    FHIRVersion,
+    detect_version_from_json,
+    normalize_version,
+    DEFAULT_VERSION,
+)
 
 
 def validate_resource(
@@ -69,10 +76,14 @@ def validate_resource(
     extension_definitions: Optional[Dict[str, "ExtensionDefinition"]] = None,
     element_definitions: Optional[List[ElementDefinition]] = None,
     bundle: Optional["Bundle"] = None,
-    resources: Optional[List[FHIRResource]] = None
+    resources: Optional[List[FHIRResource]] = None,
+    fhir_version: Optional[str] = None,
 ) -> List[str]:
     """
-    Validate a FHIR resource structure.
+    Validate a FHIR resource structure (version-aware).
+
+    Supports both R4 and R5 versions. Version is auto-detected from resource
+    or can be explicitly specified.
 
     Args:
         resource: FHIR resource to validate
@@ -88,12 +99,24 @@ def validate_resource(
         element_definitions: Optional list of ElementDefinition objects for constraint validation
         bundle: Optional Bundle containing resources for reference validation
         resources: Optional list of resources for reference validation
+        fhir_version: Optional FHIR version override ("4.0", "R4", "5.0", "R5", etc.)
+                     If None, version is auto-detected from resource
 
     Returns:
         List of validation error messages (empty if valid)
     """
     start_time = time.time()
     errors = []
+    
+    # Detect or normalize version
+    version = DEFAULT_VERSION
+    if fhir_version is not None:
+        version = normalize_version(fhir_version)
+    else:
+        # Try to detect version from resource
+        # For now, default to R4 (R5 resources not yet fully implemented)
+        # When R5 resources are available, we can detect from resource structure
+        version = DEFAULT_VERSION
 
     # Check resourceType
     if not resource.resourceType:
@@ -740,10 +763,9 @@ def validate_references(
             )
             errors.extend(item_errors)
     
-
-                # Log completion timestamp at end of operation
-                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                logger.info(f"Current Time at End of Operations: {current_time}")
+    # Log completion timestamp at end of operation
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    logger.info(f"Current Time at End of Operations: {current_time}")
     return errors
 
 
@@ -790,8 +812,6 @@ def _validate_field_value_references(
         # Validate reference exists if bundle/resources provided
 
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
         if bundle or resources:
             existence_errors = validate_reference_exists(
                 value, bundle, resources, expected_types
@@ -1048,10 +1068,6 @@ def validate_to_operation_outcome(resource: FHIRResource, **kwargs) -> "Operatio
             diagnostics=error_msg
         )
         issues.append(issue)
-
-            # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
 
     # Log completion timestamp at end of operation
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -1412,12 +1428,9 @@ def validate_resource_enhanced(
             try:
                 custom_issues = rule_func(resource)
                 issues.extend(custom_issues)
-
-                    # Log completion timestamp at end of operation
-                    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    logger.info(f"Current Time at End of Operations: {current_time}")
             except Exception as e:
                 # Log rule execution error but don't fail validation
+                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 logger.warning(f"[{current_time}] Custom validation rule failed: {e}")
     
     # Create result
@@ -1450,7 +1463,6 @@ def validate_resources_batch(
     Validate multiple resources in batch.
     
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     Args:

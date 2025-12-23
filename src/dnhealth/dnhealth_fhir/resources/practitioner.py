@@ -37,7 +37,9 @@ class PractitionerQualification:
     """
 
     identifier: List[Identifier] = field(default_factory=list)
-    code: CodeableConcept  # Coded representation of the qualification (required)
+    # Note: code is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce code is provided.
+    code: Optional[CodeableConcept] = None  # Coded representation of the qualification (required)
     period: Optional[Period] = None
     issuer: Optional[Reference] = None
     extension: List[Extension] = field(default_factory=list)

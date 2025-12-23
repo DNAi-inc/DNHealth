@@ -66,9 +66,13 @@ class MedicationKnowledgeCost:
     The pricing of the medication.
     """
 
-    type: CodeableConcept  # The category of the cost information (required)
+    # Note: type is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce type is provided.
+    type: Optional[CodeableConcept] = None  # The category of the cost information (required)
     source: Optional[str] = None  # The source or owner for the price information
-    cost: Money  # The price of the medication (required)
+    # Note: cost is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce cost is provided.
+    cost: Optional[Money] = None  # The price of the medication (required)
     extension: List[Extension] = field(default_factory=list)
 
 
@@ -102,7 +106,9 @@ class MedicationKnowledgeMedicineClassification:
     Categorization of the medication within a formulary or classification system.
     """
 
-    type: CodeableConcept  # The type of category for the medication (required)
+    # Note: type is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce type is provided.
+    type: Optional[CodeableConcept] = None  # The type of category for the medication (required)
     classification: List[CodeableConcept] = field(default_factory=list)
     extension: List[Extension] = field(default_factory=list)
 
@@ -138,7 +144,9 @@ class MedicationKnowledgeRegulatory:
     Regulatory information about a medication.
     """
 
-    regulatoryAuthority: Reference  # Specifies the authority of the regulation (required)
+    # Note: regulatoryAuthority is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce regulatoryAuthority is provided.
+    regulatoryAuthority: Optional[Reference] = None  # Specifies the authority of the regulation (required)
     substitution: List[Any] = field(default_factory=list)  # Specifies if changes are allowed when dispensing a medication from a regulatory perspective
     schedule: List[CodeableConcept] = field(default_factory=list)
     extension: List[Extension] = field(default_factory=list)

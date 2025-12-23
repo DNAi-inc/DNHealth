@@ -128,7 +128,6 @@ class ClinicalReasoningEngine:
             f"[{completion_time}] Guidance evaluation "
             f"completed in {elapsed:.3f}s ({len(recommendations)} recommendations)"
         )
-        # Log completion timestamp at end of operation
         logger.info(f"Current Time at End of Operations: {completion_time}")
         
         return guidance_response
@@ -172,7 +171,6 @@ class ClinicalReasoningEngine:
             f"[{completion_time}] PlanDefinition application "
             f"completed in {elapsed:.3f}s"
         )
-        # Log completion timestamp at end of operation
         logger.info(f"Current Time at End of Operations: {completion_time}")
         
         return guidance_response
@@ -242,7 +240,6 @@ class ClinicalReasoningEngine:
             
             elapsed = time.time() - start_time
             completion_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {completion_time}")
             raise ValueError("No CQL evaluator available and FHIRPath fallback failed")
 
     def generate_guidance_response(
@@ -292,7 +289,6 @@ class ClinicalReasoningEngine:
             f"[{completion_time}] GuidanceResponse generation "
             f"completed in {elapsed:.3f}s"
         )
-        # Log completion timestamp at end of operation
         logger.info(f"Current Time at End of Operations: {completion_time}")
         
         return guidance_response

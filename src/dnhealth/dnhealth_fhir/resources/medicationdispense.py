@@ -32,7 +32,9 @@ class MedicationDispensePerformer:
     """
 
     function: Optional[CodeableConcept] = None
-    actor: Reference  # Who performed the dispense (required)
+    # Note: actor is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce actor is provided.
+    actor: Optional[Reference] = None  # Who performed the dispense (required)
     extension: List[Extension] = field(default_factory=list)
 
 
@@ -63,7 +65,9 @@ class MedicationDispense(FHIRResource):
     # Part of
     partOf: List[Reference] = field(default_factory=list)
     # Status
-    status: str  # preparation | in-progress | cancelled | on-hold | completed | entered-in-error | stopped | declined | unknown
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # preparation | in-progress | cancelled | on-hold | completed | entered-in-error | stopped | declined | unknown (required in FHIR)
     # Status reason codeable concept
     statusReasonCodeableConcept: Optional[CodeableConcept] = None
     # Status reason reference

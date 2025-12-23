@@ -155,15 +155,23 @@ class NutritionOrder(DomainResource):
     # Instantiates
     instantiates: List[str] = field(default_factory=list)  # Instantiates protocol or definition
     # Status
-    status: str  # draft | active | on-hold | revoked | completed | entered-in-error | unknown (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # draft | active | on-hold | revoked | completed | entered-in-error | unknown (required in FHIR)
     # Intent
-    intent: str  # proposal | plan | order | original-order | reflex-order | filler-order | instance-order | option (required)
+    # Note: intent is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce intent is provided.
+    intent: Optional[str] = None  # proposal | plan | order | original-order | reflex-order | filler-order | instance-order | option (required)
     # Patient
-    patient: Reference  # The person who requires the diet, formula or nutritional supplement (required)
+    # Note: patient is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce patient is provided.
+    patient: Optional[Reference] = None  # The person who requires the diet, formula or nutritional supplement (required)
     # Encounter
     encounter: Optional[Reference] = None  # The encounter associated with this nutrition order
     # DateTime
-    dateTime: str  # Date and time the nutrition order was requested (required)
+    # Note: dateTime is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce dateTime is provided.
+    dateTime: Optional[str] = None  # Date and time the nutrition order was requested (required)
     # Orderer
     orderer: Optional[Reference] = None  # Practitioner that creates or initiates the order
     # Allergy Intolerance

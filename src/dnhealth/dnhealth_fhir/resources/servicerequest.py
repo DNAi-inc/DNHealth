@@ -50,9 +50,14 @@ class ServiceRequest(FHIRResource):
     # Requisition
     requisition: Optional[Identifier] = None
     # Status
-    status: str  # draft | active | on-hold | revoked | completed | entered-in-error | unknown
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (identifier has default value).
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # draft | active | on-hold | revoked | completed | entered-in-error | unknown (required in FHIR)
     # Intent
-    intent: str  # proposal | plan | order | original-order | reflex-order | filler-order | instance-order | option
+    # Note: intent is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce intent is provided.
+    intent: Optional[str] = None  # proposal | plan | order | original-order | reflex-order | filler-order | instance-order | option
     # Category
     category: List[CodeableConcept] = field(default_factory=list)
     # Priority
@@ -68,7 +73,9 @@ class ServiceRequest(FHIRResource):
     quantityRatio: Optional["Ratio"] = None
     quantityRange: Optional["Range"] = None
     # Subject
-    subject: Reference  # Individual or entity the service is ordered for (required)
+    # Note: subject is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce subject is provided.
+    subject: Optional[Reference] = None  # Individual or entity the service is ordered for (required)
     # Encounter
     encounter: Optional[Reference] = None
     # Occurrence dateTime

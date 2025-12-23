@@ -85,7 +85,9 @@ class MedicinalProductPharmaceutical(FHIRResource):
     # Identifiers
     identifier: List[Reference] = field(default_factory=list)
     # Administrable Dose Form
-    administrableDoseForm: CodeableConcept  # The administrable dose form, after necessary reconstitution (required)
+    # Note: administrableDoseForm is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce administrableDoseForm is provided.
+    administrableDoseForm: Optional[CodeableConcept] = None  # The administrable dose form, after necessary reconstitution (required)
     # Unit of Presentation
     unitOfPresentation: Optional[CodeableConcept] = None
     # Ingredient

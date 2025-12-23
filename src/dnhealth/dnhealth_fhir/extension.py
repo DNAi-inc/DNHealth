@@ -326,10 +326,6 @@ def _get_extension_value_for_validation(extension: "Extension") -> Any:
         if hasattr(extension, field):
             value = getattr(extension, field)
             if value is not None:
-
-        # Log completion timestamp at end of operation
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
                 return value
     
     return None
@@ -380,10 +376,6 @@ def parse_nested_extension(extension_data: Dict[str, Any]) -> "Extension":
             if isinstance(nested_data, dict):
                 nested_ext = parse_nested_extension(nested_data)
                 nested_extensions.append(nested_ext)
-
-                    # Log completion timestamp at end of operation
-                    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    logger.info(f"Current Time at End of Operations: {current_time}")
         extension.extension = nested_extensions
     
     logger.debug(f"[{current_time}] Nested extension parsing completed")
@@ -571,10 +563,6 @@ class ExtensionRegistry:
     def __init__(self):
         """Initialize the extension registry."""
         self._extensions: Dict[str, ExtensionDefinition] = {}
-
-        # Log completion timestamp at end of operation
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
     
     def register(self, ext_def: ExtensionDefinition) -> None:
         """
@@ -592,10 +580,6 @@ class ExtensionRegistry:
         Get extension definition by URL.
         
         Args:
-
-                # Log completion timestamp at end of operation
-                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                logger.info(f"Current Time at End of Operations: {current_time}")
             url: Extension URL
             
         Returns:

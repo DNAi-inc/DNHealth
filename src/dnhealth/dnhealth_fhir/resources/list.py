@@ -32,7 +32,9 @@ class ListEntry:
     flag: Optional[CodeableConcept] = None  # Status/Workflow information about this item
     deleted: Optional[bool] = None  # If this item is actually marked as deleted
     date: Optional[str] = None  # When item added to list
-    item: Reference  # Actual item (required)
+    # Note: item is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce item is provided.
+    item: Optional[Reference] = None  # Actual item (required)
     extension: ListType[Extension] = field(default_factory=list)
     modifierExtension: ListType[Extension] = field(default_factory=list)
 
@@ -50,9 +52,13 @@ class ListResource(DomainResource):
     # Identifier
     identifier: ListType[Identifier] = field(default_factory=list)  # Business identifier
     # Status
-    status: str  # current | retired | entered-in-error (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # current | retired | entered-in-error (required)
     # Mode
-    mode: str  # working | snapshot | changes (required)
+    # Note: mode is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce mode is provided.
+    mode: Optional[str] = None  # working | snapshot | changes (required)
     # Title
     title: Optional[str] = None  # Descriptive name for the list
     # Code

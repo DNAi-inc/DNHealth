@@ -47,11 +47,16 @@ class Observation(FHIRResource):
     # Part of
     partOf: List[Reference] = field(default_factory=list)
     # Status
-    status: str  # registered, preliminary, final, amended, corrected, cancelled, entered-in-error, unknown
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (identifier has default value).
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # registered, preliminary, final, amended, corrected, cancelled, entered-in-error, unknown (required in FHIR)
     # Category
     category: List[CodeableConcept] = field(default_factory=list)
     # Code
-    code: CodeableConcept
+    # Note: code is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce code is provided.
+    code: Optional[CodeableConcept] = None
     # Subject
     subject: Optional[Reference] = None
     # Focus

@@ -12,6 +12,8 @@ and complex types as specified in the HL7 v3 specification.
 Enhanced with XML serialization and deserialization support.
 """
 
+from __future__ import annotations
+
 from typing import Dict, List, Optional, Any, Union, Tuple
 from dataclasses import dataclass, field
 from datetime import datetime

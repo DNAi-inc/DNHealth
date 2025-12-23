@@ -40,7 +40,9 @@ class ResearchStudyArm:
     id: Optional[str] = None
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
-    name: str  # Label for study arm (required)
+    # Note: name is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce name is provided.
+    name: Optional[str] = None  # Label for study arm (required)
     type: Optional[CodeableConcept] = None  # Categorization of study arm
     description: Optional[str] = None  # Short explanation of study path
 
@@ -79,7 +81,9 @@ class ResearchStudy(DomainResource):
     # Part Of
     partOf: List[Reference] = field(default_factory=list)  # Part of larger study
     # Status
-    status: str  # active | administratively-completed | approved | closed-to-accrual | closed-to-accrual-and-intervention | completed | disapproved | in-review | temporarily-closed-to-accrual | temporarily-closed-to-accrual-and-intervention | withdrawn (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # active | administratively-completed | approved | closed-to-accrual | closed-to-accrual-and-intervention | completed | disapproved | in-review | temporarily-closed-to-accrual | temporarily-closed-to-accrual-and-intervention | withdrawn (required in FHIR)
     # Primary Purpose Type
     primaryPurposeType: Optional[CodeableConcept] = None  # treatment | prevention | diagnostic | supportive-care | screening | health-services-research | basic-science | device-feasibility
     # Phase

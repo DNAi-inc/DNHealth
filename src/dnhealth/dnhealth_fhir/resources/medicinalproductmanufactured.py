@@ -15,10 +15,11 @@ from typing import List, Optional
 
 from dnhealth.dnhealth_fhir.resources.base import FHIRResource
 from dnhealth.dnhealth_fhir.types import (
-    Extension,
-    CodeableConcept,
-    Quantity,
     Attachment,
+    CodeableConcept,
+    Extension,
+    Quantity,
+    Reference,
 )
 
 
@@ -32,11 +33,15 @@ class MedicinalProductManufactured(FHIRResource):
 
     resourceType: str = "MedicinalProductManufactured"
     # Manufactured Dose Form
-    manufacturedDoseForm: CodeableConcept  # Dose form of a single manufactured item (required)
+    # Note: manufacturedDoseForm is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce manufacturedDoseForm is provided.
+    manufacturedDoseForm: Optional[CodeableConcept] = None  # Dose form of a single manufactured item (required)
     # Unit of Presentation
     unitOfPresentation: Optional[CodeableConcept] = None
     # Quantity
-    quantity: Quantity  # The quantity or "count number" of the manufactured item (required)
+    # Note: quantity is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce quantity is provided.
+    quantity: Optional[Quantity] = None  # The quantity or "count number" of the manufactured item (required)
     # Manufacturer
     manufacturer: List[Reference] = field(default_factory=list)
     # Ingredient

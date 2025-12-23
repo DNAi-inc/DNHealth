@@ -47,7 +47,9 @@ class RelatedPerson(FHIRResource):
     # Active
     active: Optional[bool] = None
     # Patient
-    patient: Reference  # The patient this person is related to (required)
+    # Note: patient is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce patient is provided.
+    patient: Optional[Reference] = None  # The patient this person is related to (required)
     # Relationship
     relationship: List[CodeableConcept] = field(default_factory=list)
     # Name
@@ -75,7 +77,9 @@ class RelatedPersonCommunication:
     health.
     """
 
-    language: CodeableConcept  # The language which can be used to communicate with the patient about his or her health (required)
+    # Note: language is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce language is provided.
+    language: Optional[CodeableConcept] = None  # The language which can be used to communicate with the patient about his or her health (required)
     preferred: Optional[bool] = None
     extension: List[Extension] = field(default_factory=list)
 

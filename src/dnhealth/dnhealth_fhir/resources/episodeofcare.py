@@ -30,10 +30,14 @@ class EpisodeOfCareStatusHistory:
     The history of statuses that the EpisodeOfCare has been through.
     """
     
-    status: str  # planned | waitlist | active | onhold | finished | cancelled | entered-in-error (required)
-    period: Period  # Duration the EpisodeOfCare was in the specified status (required)
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # planned | waitlist | active | onhold | finished | cancelled | entered-in-error (required)
+    # Note: period is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce period is provided.
+    period: Optional[Period] = None  # Duration the EpisodeOfCare was in the specified status (required)
 
 
 @dataclass
@@ -44,11 +48,13 @@ class EpisodeOfCareDiagnosis:
     The list of diagnosis relevant to this episode of care.
     """
     
-    condition: Reference  # Conditions/problems/diagnoses this episode of care addresses (required)
-    role: Optional[CodeableConcept] = None  # Role that this diagnosis has within the episode of care
-    rank: Optional[int] = None  # Ranking of the diagnosis (for each role type)
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
+    role: Optional[CodeableConcept] = None  # Role that this diagnosis has within the episode of care
+    rank: Optional[int] = None  # Ranking of the diagnosis (for each role type)
+    # Note: condition is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce condition is provided.
+    condition: Optional[Reference] = None  # Conditions/problems/diagnoses this episode of care addresses (required)
 
 
 @dataclass
@@ -64,7 +70,9 @@ class EpisodeOfCare(DomainResource):
     # Identifier
     identifier: List[Identifier] = field(default_factory=list)  # Business Identifier(s) relevant for this EpisodeOfCare
     # Status
-    status: str  # planned | waitlist | active | onhold | finished | cancelled | entered-in-error (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # planned | waitlist | active | onhold | finished | cancelled | entered-in-error (required in FHIR)
     # Status History
     statusHistory: List[EpisodeOfCareStatusHistory] = field(default_factory=list)  # The history of statuses that the EpisodeOfCare has been through
     # Type
@@ -72,7 +80,9 @@ class EpisodeOfCare(DomainResource):
     # Diagnosis
     diagnosis: List[EpisodeOfCareDiagnosis] = field(default_factory=list)  # The list of diagnosis relevant to this episode of care
     # Patient
-    patient: Reference  # The patient who is the focus of this episode of care (required)
+    # Note: patient is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce patient is provided.
+    patient: Optional[Reference] = None  # The patient who is the focus of this episode of care (required)
     # Managing Organization
     managingOrganization: Optional[Reference] = None  # Organization that assumes care
     # Period

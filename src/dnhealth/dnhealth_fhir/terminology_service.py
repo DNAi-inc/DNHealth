@@ -6,9 +6,10 @@
 
 import logging
 """
-FHIR R4 Terminology Service integration.
+FHIR Terminology Service integration (version-aware, supports R4 and R5).
 
 Provides a unified interface for terminology operations including validation, expansion, and translation.
+Version-aware: supports both FHIR R4 and R5 terminology resources.
 """
 
 from typing import Dict, List, Optional, Set, Tuple, Any
@@ -179,7 +180,6 @@ class TerminologyService:
     def get_conceptmap(self, url: str) -> Optional[ConceptMap]:
         """Get a ConceptMap by URL."""
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         return self._conceptmaps.get(url)
@@ -979,8 +979,6 @@ def _is_descendant(parent_concept: CodeSystemConcept, target_code: str, codesyst
         if _is_descendant(nested_concept, target_code, codesystem):
 
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
             return True
     
     return False

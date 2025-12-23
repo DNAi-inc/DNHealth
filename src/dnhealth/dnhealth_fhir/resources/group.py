@@ -36,7 +36,9 @@ class GroupCharacteristic:
     valueQuantity: Optional[Quantity] = None  # Value held by characteristic
     valueRange: Optional[Any] = None  # Value held by characteristic (Range)
     valueReference: Optional[Reference] = None  # Value held by characteristic
-    exclude: bool  # Group includes or excludes (required)
+    # Note: exclude is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce exclude is provided.
+    exclude: Optional[bool] = None  # Group includes or excludes (required)
     period: Optional[Period] = None  # Period over which characteristic is tested
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
@@ -72,9 +74,13 @@ class Group(DomainResource):
     # Active
     active: Optional[bool] = None  # Whether this group record is in active use
     # Type
-    type: str  # person | animal | practitioner | device | medication | substance (required)
+    # Note: type is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce type is provided.
+    type: Optional[str] = None  # person | animal | practitioner | device | medication | substance (required)
     # Actual
-    actual: bool  # Descriptive or actual (required)
+    # Note: actual is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce actual is provided.
+    actual: Optional[bool] = None  # Descriptive or actual (required)
     # Code
     code: Optional[CodeableConcept] = None  # Kind of Group members
     # Name

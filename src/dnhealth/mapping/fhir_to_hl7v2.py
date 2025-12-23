@@ -91,10 +91,6 @@ def convert_patient_to_adt(
     current_time_end = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     logger.info(f"[{current_time_end}] Patient to ADT conversion completed in {elapsed:.2f} seconds")
     
-
-        # Log completion timestamp at end of operation
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
     return message
 
 
@@ -382,10 +378,6 @@ def _create_msh_segment(message_type: str, encoding_chars: EncodingCharacters) -
         [Field([Component([Subcomponent(timestamp)])])],  # MSH-7: Date/Time of Message
         [Field()],  # MSH-8: Security
         [Field([Component([Subcomponent(message_type)])])],  # MSH-9: Message Type
-
-            # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
         [Field([Component([Subcomponent("1")])])],  # MSH-10: Message Control ID
         [Field([Component([Subcomponent("P")])])],  # MSH-11: Processing ID
         [Field([Component([Subcomponent("2.5")])])],  # MSH-12: Version ID
@@ -397,10 +389,6 @@ def _create_msh_segment(message_type: str, encoding_chars: EncodingCharacters) -
 def _create_evn_segment(encoding_chars: EncodingCharacters) -> Segment:
     """Create EVN segment."""
     from datetime import datetime
-
-        # Log completion timestamp at end of operation
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
     
     now = datetime.now()
     timestamp = now.strftime("%Y%m%d%H%M%S")
@@ -462,16 +450,8 @@ def _create_pid_segment_from_patient(patient: Patient, encoding_chars: EncodingC
         # Map FHIR gender to HL7v2 gender codes
         gender_map = {
             "male": "M",
-
-                # Log completion timestamp at end of operation
-                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                logger.info(f"Current Time at End of Operations: {current_time}")
             "female": "F",
             "other": "O",
-
-                # Log completion timestamp at end of operation
-                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                logger.info(f"Current Time at End of Operations: {current_time}")
             "unknown": "U",
         }
         gender_code = gender_map.get(patient.gender.lower(), "U")
@@ -504,16 +484,8 @@ def _create_pv1_segment_from_encounter(encounter: Encounter, encoding_chars: Enc
         fields.append([Field()])
     
     # Add empty fields for remaining PV1 fields (simplified)
-
-        # Log completion timestamp at end of operation
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
     while len(fields) < 45:
         fields.append([Field()])
-
-        # Log completion timestamp at end of operation
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
     
     # PV1-19: Visit Number
     if encounter.identifier:
@@ -551,10 +523,6 @@ def _create_obr_segment_from_servicerequest(sr: ServiceRequest, encoding_chars: 
         placer_id = sr.identifier[0].value if sr.identifier[0].value else ""
         fields.append([Field([Component([Subcomponent(placer_id)])])])
     else:
-
-            # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
         fields.append([Field()])
     
     # OBR-4: Universal Service Identifier
@@ -611,10 +579,6 @@ def _create_obx_segment_from_observation(obs: Observation, encoding_chars: Encod
     
     # OBX-5: Observation Value
     if obs.valueString:
-
-            # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
         fields.append([Field()])  # OBX-4
         fields.append([Field([Component([Subcomponent(obs.valueString)])])])
     else:
@@ -652,10 +616,6 @@ def _create_obx_segment_from_observation(obs: Observation, encoding_chars: Encod
 
 
 def _create_txa_segment_from_documentreference(dr: DocumentReference, encoding_chars: EncodingCharacters) -> Segment:
-
-        # Log completion timestamp at end of operation
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
     """Create TXA segment from DocumentReference resource."""
     fields = []
     

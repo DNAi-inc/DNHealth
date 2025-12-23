@@ -49,13 +49,21 @@ class NamingSystem(MetadataResource):
 
     resourceType: str = "NamingSystem"
     # Name
-    name: str  # Human-readable name (required)
+    # Note: name is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce name is provided.
+    name: Optional[str] = None  # Human-readable name (required)
     # Status
-    status: str  # draft | active | retired | unknown (required, inherited from MetadataResource)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # draft | active | retired | unknown (required, inherited from MetadataResource)
     # Kind
-    kind: str  # codesystem | identifier | root (required)
+    # Note: kind is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce kind is provided.
+    kind: Optional[str] = None  # codesystem | identifier | root (required)
     # Date
-    date: str  # Date last changed (required, ISO 8601 dateTime, inherited from MetadataResource)
+    # Note: date is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce date is provided.
+    date: Optional[str] = None  # Date last changed (required, ISO 8601 dateTime, inherited from MetadataResource)
     # Publisher
     publisher: Optional[str] = None  # Name of publisher (inherited from MetadataResource)
     # Contact

@@ -60,7 +60,10 @@ class ConsentProvisionActor:
     """
     
     role: Optional[CodeableConcept] = None  # How the actor is involved
-    reference: Reference  # Resource for the actor (required)
+    # Note: reference is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (role has default value).
+    # Validation should enforce reference is provided.
+    reference: Optional[Reference] = None  # Resource for the actor (required in FHIR)
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
 
@@ -115,9 +118,15 @@ class Consent(DomainResource):
     # Identifier
     identifier: List[Identifier] = field(default_factory=list)  # Identifier for this record
     # Status
-    status: str  # draft | proposed | active | rejected | inactive | entered-in-error (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (identifier has default value).
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # draft | proposed | active | rejected | inactive | entered-in-error (required in FHIR)
     # Scope
-    scope: CodeableConcept  # Which of the four areas this resource covers (required)
+    # Note: scope is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (identifier has default value).
+    # Validation should enforce scope is provided.
+    scope: Optional[CodeableConcept] = None  # Which of the four areas this resource covers (required in FHIR)
     # Category
     category: List[CodeableConcept] = field(default_factory=list)  # Classification of the consent statement
     # Patient

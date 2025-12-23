@@ -42,7 +42,9 @@ class Media(FHIRResource):
     # Part of
     partOf: List[Reference] = field(default_factory=list)
     # Status
-    status: str  # preparation | in-progress | not-done | on-hold | stopped | completed | entered-in-error | unknown (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # preparation | in-progress | not-done | on-hold | stopped | completed | entered-in-error | unknown (required in FHIR)
     # Type
     type: Optional[CodeableConcept] = None
     # Modality
@@ -76,7 +78,9 @@ class Media(FHIRResource):
     # Duration
     duration: Optional[float] = None  # Length in seconds (audio / video)
     # Content
-    content: Attachment  # Actual media - file or stream (required)
+    # Note: content is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce content is provided.
+    content: Optional[Attachment] = None  # Actual media - file or stream (required)
     # Note
     note: List[Annotation] = field(default_factory=list)
 

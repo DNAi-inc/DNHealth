@@ -57,7 +57,9 @@ class Goal(DomainResource):
     # Identifier
     identifier: List[Identifier] = field(default_factory=list)  # External Ids for this goal
     # Lifecycle Status
-    lifecycleStatus: str  # proposed | planned | accepted | active | on-hold | completed | cancelled | entered-in-error | rejected (required)
+    # Note: lifecycleStatus is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce lifecycleStatus is provided.
+    lifecycleStatus: Optional[str] = None  # proposed | planned | accepted | active | on-hold | completed | cancelled | entered-in-error | rejected (required)
     # Achievement Status
     achievementStatus: Optional[CodeableConcept] = None  # in-progress | improving | worsening | no-change | achieved | sustaining | not-achieved | no-progress | not-attainable
     # Category
@@ -65,9 +67,13 @@ class Goal(DomainResource):
     # Priority
     priority: Optional[CodeableConcept] = None  # high | medium | low
     # Description
-    description: CodeableConcept  # Code or text describing goal (required)
+    # Note: description is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce description is provided.
+    description: Optional[CodeableConcept] = None  # Code or text describing goal (required)
     # Subject
-    subject: Reference  # Who this goal is intended for (required)
+    # Note: subject is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce subject is provided.
+    subject: Optional[Reference] = None  # Who this goal is intended for (required)
     # Start Date
     startDate: Optional[str] = None  # When goal pursuit begins
     # Start CodeableConcept

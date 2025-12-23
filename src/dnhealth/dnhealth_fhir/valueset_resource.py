@@ -196,10 +196,6 @@ def parse_valueset_json(json_data: Dict[str, Any]) -> ValueSet:
     # Log completion timestamp at end of operation
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     logger.debug(f"[{current_time}] ValueSet JSON parsing completed")
-
-        # Log completion timestamp at end of operation
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
     
     return result
 
@@ -227,7 +223,6 @@ def get_codes_from_valueset(valueset: ValueSet) -> Set[str]:
     if valueset.expansion:
         _extract_codes_from_expansion(valueset.expansion, codes)
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     
@@ -247,10 +242,6 @@ def _extract_codes_from_expansion(expansion: ValueSetExpansion, codes: Set[str])
         codes: Set to add codes to
     """
     for contains in expansion.contains:
-
-            # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
         if contains.code:
             codes.add(contains.code)
         # Recursively process nested contains

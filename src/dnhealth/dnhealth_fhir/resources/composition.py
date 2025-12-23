@@ -102,9 +102,15 @@ class Composition(DomainResource):
     # Identifier
     identifier: Optional[Identifier] = None  # Version-independent identifier for the Composition
     # Status
-    status: str  # preliminary | final | amended | entered-in-error (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (DomainResource has modifierExtension with default).
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # preliminary | final | amended | entered-in-error (required in FHIR)
     # Type
-    type: CodeableConcept  # Kind of composition (required)
+    # Note: type is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility.
+    # Validation should enforce type is provided.
+    type: Optional[CodeableConcept] = None  # Kind of composition (required in FHIR)
     # Category
     category: List[CodeableConcept] = field(default_factory=list)  # Categorization of Composition
     # Subject
@@ -112,11 +118,17 @@ class Composition(DomainResource):
     # Encounter
     encounter: Optional[Reference] = None  # Context of the Composition
     # Date
-    date: str  # Composition editing time (required)
+    # Note: date is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (encounter has default value).
+    # Validation should enforce date is provided.
+    date: Optional[str] = None  # Composition editing time (required in FHIR)
     # Author
     author: List[Reference] = field(default_factory=list)  # Who and/or what authored the composition
     # Title
-    title: str  # Human Readable name of the composition (required)
+    # Note: title is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (encounter has default value).
+    # Validation should enforce title is provided.
+    title: Optional[str] = None  # Human Readable name of the composition (required in FHIR)
     # Confidentiality
     confidentiality: Optional[str] = None  # As defined by affinity domain
     # Attester

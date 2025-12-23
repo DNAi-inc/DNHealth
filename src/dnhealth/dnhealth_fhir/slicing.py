@@ -235,7 +235,6 @@ def apply_slicing_discriminator(
         slices[slice_key].append(item)
     
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     return slices
@@ -271,10 +270,6 @@ def _get_discriminator_value(
         return str(value) if value is not None else ""
     elif discriminator.type == "type":
         # Match type
-
-            # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
         return type(item).__name__
     elif discriminator.type == "profile":
         # Match profile (simplified)
@@ -302,10 +297,6 @@ def _get_value_by_path(obj: Any, path: str) -> Any:
     
     for part in parts:
         if hasattr(current, part):
-
-                # Log completion timestamp at end of operation
-                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                logger.info(f"Current Time at End of Operations: {current_time}")
             current = getattr(current, part)
         elif isinstance(current, dict):
             current = current.get(part)

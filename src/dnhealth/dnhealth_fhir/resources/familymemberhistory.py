@@ -59,17 +59,23 @@ class FamilyMemberHistory(DomainResource):
     # Instantiates URI
     instantiatesUri: List[str] = field(default_factory=list)  # Instantiates external protocol or definition
     # Status
-    status: str  # partial | completed | entered-in-error | health-unknown (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # partial | completed | entered-in-error | health-unknown (required in FHIR)
     # Data Absent Reason
     dataAbsentReason: Optional[CodeableConcept] = None  # subject-unknown | withheld | unable-to-obtain | deferred
     # Patient
-    patient: Reference  # Patient history is about (required)
+    # Note: patient is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce patient is provided.
+    patient: Optional[Reference] = None  # Patient history is about (required)
     # Date
     date: Optional[str] = None  # When history was recorded or last updated
     # Name
     name: Optional[str] = None  # The family member described
     # Relationship
-    relationship: CodeableConcept  # Relationship to the subject (required)
+    # Note: relationship is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce relationship is provided.
+    relationship: Optional[CodeableConcept] = None  # Relationship to the subject (required)
     # Sex
     sex: Optional[CodeableConcept] = None  # male | female | other | unknown
     # Born Period

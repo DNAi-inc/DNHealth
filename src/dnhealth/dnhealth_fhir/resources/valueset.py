@@ -238,8 +238,8 @@ def _extract_codes_from_expansion(expansion: ValueSetExpansion, codes: Set[str])
     Recursively extract codes from expansion.contains.
     
     Args:
-        expansion: ValueSetExpansion object
-        codes: Set to add codes to
+        expansion: Optional[ValueSetExpansion object] = None
+        codes: Optional[Set to add codes to] = None
     """
     for contains in expansion.contains:
         if contains.code:
@@ -254,8 +254,8 @@ def _extract_codes_from_expansion_nested(contains_list: List[ValueSetExpansionCo
     Recursively extract codes from nested contains lists.
     
     Args:
-        contains_list: List of ValueSetExpansionContains objects
-        codes: Set to add codes to
+        contains_list: Optional[List of ValueSetExpansionContains objects] = None
+        codes: Optional[Set to add codes to] = None
     """
     for contains in contains_list:
         if contains.code:

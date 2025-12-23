@@ -39,7 +39,6 @@ class ResourceDiff:
             "resource2": resource2_value,
         })
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     
@@ -49,7 +48,6 @@ class ResourceDiff:
         self.structural_differences.append(description)
 
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
 
@@ -124,7 +122,6 @@ def _normalize_value(value: Any) -> Any:
                 result[key] = _normalize_value(val)
         return result
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     
@@ -192,8 +189,6 @@ def compare_resources(resource1: FHIRResource, resource2: FHIRResource) -> Resou
         f"Resource comparison completed at {completion_time} ({elapsed:.4f}s elapsed): "
 
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
         f"Identical={diff.identical}, "
         f"{len(diff.structural_differences)} structural differences, "
         f"{len(diff.field_differences)} field differences"

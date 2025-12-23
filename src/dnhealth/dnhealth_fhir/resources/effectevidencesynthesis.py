@@ -43,7 +43,9 @@ class EffectEvidenceSynthesisResultsByExposure:
     description: Optional[str] = None  # Description of results by exposure
     exposureState: Optional[str] = None  # exposure | exposure-alternative
     variantState: Optional[CodeableConcept] = None  # Variant exposure states
-    riskEvidenceSynthesis: Reference  # Risk evidence synthesis (required)
+    # Note: riskEvidenceSynthesis is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce riskEvidenceSynthesis is provided.
+    riskEvidenceSynthesis: Optional[Reference] = None  # Risk evidence synthesis (required)
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
 
@@ -171,13 +173,17 @@ class EffectEvidenceSynthesis(MetadataResource):
     # Study Type
     studyType: Optional[CodeableConcept] = None  # Type of study
     # Population
-    population: Reference  # What population? (required)
+    # Note: population is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce population is provided.
+    population: Optional[Reference] = None  # What population? (required)
     # Exposure
     exposure: Optional[Reference] = None  # What exposure?
     # Exposure Alternative
     exposureAlternative: Optional[Reference] = None  # What comparison exposure?
     # Outcome
-    outcome: Reference  # What outcome? (required)
+    # Note: outcome is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce outcome is provided.
+    outcome: Optional[Reference] = None  # What outcome? (required)
     # Sample Size
     sampleSize: Optional[EffectEvidenceSynthesisSampleSize] = None  # What sample size was involved?
     # Results By Exposure

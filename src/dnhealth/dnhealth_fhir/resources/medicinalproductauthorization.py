@@ -44,7 +44,9 @@ class MedicinalProductAuthorizationProcedure:
     """
 
     identifier: Optional[Identifier] = None
-    type: CodeableConcept  # Type of procedure (required)
+    # Note: type is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce type is provided.
+    type: Optional[CodeableConcept] = None  # Type of procedure (required)
     datePeriod: Optional[Period] = None
     dateDateTime: Optional[str] = None  # ISO 8601 dateTime
     application: List["MedicinalProductAuthorizationProcedure"] = field(default_factory=list)

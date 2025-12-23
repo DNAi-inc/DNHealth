@@ -35,19 +35,29 @@ class ImmunizationEvaluation(DomainResource):
     # Identifier
     identifier: List[Identifier] = field(default_factory=list)  # Business identifier
     # Status
-    status: str  # completed | entered-in-error (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # completed | entered-in-error (required in FHIR)
     # Patient
-    patient: Reference  # Who this evaluation is for (required)
+    # Note: patient is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce patient is provided.
+    patient: Optional[Reference] = None  # Who this evaluation is for (required)
     # Date
     date: Optional[str] = None  # Date evaluation was performed
     # Authority
     authority: Optional[Reference] = None  # Who is responsible for publishing the recommendations
     # Target Disease
-    targetDisease: CodeableConcept  # Vaccine preventable disease being evaluated against (required)
+    # Note: targetDisease is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce targetDisease is provided.
+    targetDisease: Optional[CodeableConcept] = None  # Vaccine preventable disease being evaluated against (required)
     # Immunization Event
-    immunizationEvent: Reference  # Immunization being evaluated (required)
+    # Note: immunizationEvent is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce immunizationEvent is provided.
+    immunizationEvent: Optional[Reference] = None  # Immunization being evaluated (required)
     # Dose Status
-    doseStatus: CodeableConcept  # Status of the dose relative to published recommendations (required)
+    # Note: doseStatus is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce doseStatus is provided.
+    doseStatus: Optional[CodeableConcept] = None  # Status of the dose relative to published recommendations (required)
     # Dose Status Reason
     doseStatusReason: List[CodeableConcept] = field(default_factory=list)  # Reason for the dose status
     # Description

@@ -34,7 +34,10 @@ class ContractContentDefinition:
     subType: Optional[CodeableConcept] = None  # Detailed Content structure type
     publisher: Optional[Reference] = None  # Publisher Entity
     publicationDate: Optional[str] = None  # When published
-    publicationStatus: str  # amended | appended | cancelled | disputed | entered-in-error | executable | executed | negotiable | offered | policy | rejected | renewed | revoked | resolved | terminated (required)
+    # Note: publicationStatus is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (publicationDate has default value).
+    # Validation should enforce publicationStatus is provided.
+    publicationStatus: Optional[str] = None  # amended | appended | cancelled | disputed | entered-in-error | executable | executed | negotiable | offered | policy | rejected | renewed | revoked | resolved | terminated (required in FHIR)
     copyright: Optional[str] = None  # Publication Ownership
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
@@ -132,11 +135,20 @@ class ContractTermAction:
     """
     
     doNotPerform: Optional[bool] = None  # True if the term prohibits the action
-    type: CodeableConcept  # Type or form of the action (required)
+    # Note: type is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (doNotPerform has default value).
+    # Validation should enforce type is provided.
+    type: Optional[CodeableConcept] = None  # Type or form of the action (required in FHIR)
     subject: List[ContractTermActionSubject] = field(default_factory=list)  # Entity of the action
-    intent: CodeableConcept  # Purpose for the Contract Term Action (required)
+    # Note: intent is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (doNotPerform has default value).
+    # Validation should enforce intent is provided.
+    intent: Optional[CodeableConcept] = None  # Purpose for the Contract Term Action (required in FHIR)
     linkId: List[str] = field(default_factory=list)  # Pointer to specific item
-    status: CodeableConcept  # State of the action (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (linkId has default value).
+    # Validation should enforce status is provided.
+    status: Optional[CodeableConcept] = None  # State of the action (required in FHIR)
     context: Optional[Reference] = None  # Episode associated with action
     contextLinkId: List[str] = field(default_factory=list)  # Pointer to specific item
     occurrenceDateTime: Optional[str] = None  # When action occurs

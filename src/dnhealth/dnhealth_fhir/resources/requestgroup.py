@@ -75,7 +75,9 @@ class RequestGroupActionCondition:
     id: Optional[str] = None
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
-    kind: str  # applicability | start | stop (required)
+    # Note: kind is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce kind is provided.
+    kind: Optional[str] = None  # applicability | start | stop (required)
     expression: Optional[Any] = None  # Boolean-valued expression (Expression)
 
 
@@ -90,8 +92,12 @@ class RequestGroupActionRelatedAction:
     id: Optional[str] = None
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
-    actionId: str  # What action this is related to (required)
-    relationship: str  # before-start | before | before-end | concurrent-with-start | concurrent | concurrent-with-end | after-start | after | after-end (required)
+    # Note: actionId is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce actionId is provided.
+    actionId: Optional[str] = None  # What action this is related to (required)
+    # Note: relationship is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce relationship is provided.
+    relationship: Optional[str] = None  # before-start | before | before-end | concurrent-with-start | concurrent | concurrent-with-end | after-start | after | after-end (required)
     offsetDuration: Optional[Any] = None  # Time offset for the relationship (Duration)
     offsetRange: Optional[Any] = None  # Time offset for the relationship (Range)
 
@@ -107,9 +113,15 @@ class RequestGroup(DomainResource):
     
     resourceType: str = "RequestGroup"
     # Required fields (must come before optional fields in dataclasses)
-    status: str  # draft | active | on-hold | revoked | completed | entered-in-error | unknown (required)
-    intent: str  # proposal | plan | order | original-order | reflex-order | filler-order | instance-order | option (required)
-    priority: str  # routine | urgent | asap | stat (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # draft | active | on-hold | revoked | completed | entered-in-error | unknown (required)
+    # Note: intent is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce intent is provided.
+    intent: Optional[str] = None  # proposal | plan | order | original-order | reflex-order | filler-order | instance-order | option (required)
+    # Note: priority is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce priority is provided.
+    priority: Optional[str] = None  # routine | urgent | asap | stat (required)
     # Optional fields (with defaults)
     identifier: List[Identifier] = field(default_factory=list)  # Business identifier
     instantiatesCanonical: List[str] = field(default_factory=list)  # Instantiates FHIR protocol or definition (canonical references)

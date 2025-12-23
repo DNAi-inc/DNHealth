@@ -11,7 +11,7 @@ Subscription represents a server push subscription criteria.
 """
 
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import Any, List, Optional
 from datetime import datetime
 import logging
 
@@ -35,7 +35,9 @@ class SubscriptionChannel:
     id: Optional[str] = None
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
-    type: str  # rest-hook | websocket | email | sms | message (required)
+    # Note: type is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce type is provided.
+    type: Optional[str] = None  # rest-hook | websocket | email | sms | message (required)
     endpoint: Optional[str] = None  # Where the channel points to
     payload: Optional[str] = None  # MIME type to send
     header: List[str] = field(default_factory=list)  # Usage depends on the channel type
@@ -52,19 +54,27 @@ class Subscription(DomainResource):
     
     resourceType: str = "Subscription"
     # Status
-    status: str  # requested | active | error | off | entered-in-error (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # requested | active | error | off | entered-in-error (required)
     # Contact
     contact: List[Any] = field(default_factory=list)  # Contact details for source (ContactPoint)
     # End
     end: Optional[str] = None  # When to automatically delete the subscription
     # Reason
-    reason: str  # Description of why this subscription was created (required)
+    # Note: reason is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce reason is provided.
+    reason: Optional[str] = None  # Description of why this subscription was created (required)
     # Criteria
-    criteria: str  # Rule for server push (required)
+    # Note: criteria is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce criteria is provided.
+    criteria: Optional[str] = None  # Rule for server push (required)
     # Error
     error: Optional[str] = None  # Latest error note
     # Channel
-    channel: SubscriptionChannel  # The channel on which to report matches to the criteria (required)
+    # Note: channel is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce channel is provided.
+    channel: Optional[SubscriptionChannel] = None  # The channel on which to report matches to the criteria (required)
 
 def _log_module_initialization():
     """Log module initialization timestamp."""

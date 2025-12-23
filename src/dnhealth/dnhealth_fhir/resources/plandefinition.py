@@ -128,7 +128,9 @@ class PlanDefinitionActionCondition:
     id: Optional[str] = None
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
-    kind: str  # applicability | start | stop (required)
+    # Note: kind is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce kind is provided.
+    kind: Optional[str] = None  # applicability | start | stop (required)
     expression: Optional[Any] = None  # Boolean-valued expression (Expression)
 
 
@@ -175,8 +177,12 @@ class PlanDefinitionActionRelatedAction:
     id: Optional[str] = None
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
-    actionId: str  # What action is this related to (required)
-    relationship: str  # before-start | before | before-end | concurrent-with-start | concurrent | concurrent-with-end | after-start | after | after-end (required)
+    # Note: actionId is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce actionId is provided.
+    actionId: Optional[str] = None  # What action is this related to (required)
+    # Note: relationship is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce relationship is provided.
+    relationship: Optional[str] = None  # before-start | before | before-end | concurrent-with-start | concurrent | concurrent-with-end | after-start | after | after-end (required)
     offsetDuration: Optional[Duration] = None  # Time offset for the relationship
     offsetRange: Optional[Any] = None  # Time offset for the relationship (Range)
 

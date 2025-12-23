@@ -38,7 +38,9 @@ class SpecimenDefinitionTypeTested:
 
     isDerived: Optional[bool] = None
     type: Optional[CodeableConcept] = None
-    preference: str  # preferred | alternate (required)
+    # Note: preference is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce preference is provided.
+    preference: Optional[str] = None  # preferred | alternate (required)
     container: Optional["SpecimenDefinitionTypeTestedContainer"] = None
     requirement: Optional[str] = None
     retentionTime: Optional[Duration] = None

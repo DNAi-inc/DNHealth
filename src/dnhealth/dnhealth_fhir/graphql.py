@@ -348,11 +348,6 @@ class GraphQLSchemaGenerator:
                 lines.append(field_str)
             lines.append("}")
             lines.append("")
-        
-
-                # Log completion timestamp at end of operation
-                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                logger.info(f"Current Time at End of Operations: {current_time}")
         return "\n".join(lines)
     
     def get_type(self, type_name: str) -> Optional[GraphQLType]:
@@ -366,7 +361,6 @@ class GraphQLSchemaGenerator:
             GraphQLType if found, None otherwise
         """
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         return self.types.get(type_name)
@@ -411,7 +405,6 @@ class GraphQLQueryParser:
         try:
             root_node = self._parse_query(query)
         except Exception as e:
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             logger.error(f"[{current_time}] Failed to parse GraphQL query: {e}")
             raise ValueError(f"Invalid GraphQL query: {e}") from e
         
@@ -599,8 +592,6 @@ class GraphQLQueryParser:
                 
 
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
                 return GraphQLQueryNode(
                     field_name=field_name,
                     alias=alias,
@@ -670,7 +661,6 @@ class GraphQLExecutor:
         try:
             query_node = self.query_parser.parse(query)
         except Exception as e:
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             logger.error(f"[{current_time}] Failed to parse GraphQL query: {e}")
             raise ValueError(f"Invalid GraphQL query: {e}") from e
         
@@ -678,7 +668,6 @@ class GraphQLExecutor:
         try:
             result = self._execute_query_node(query_node, variables or {})
         except Exception as e:
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             logger.error(f"[{current_time}] Failed to execute GraphQL query: {e}")
             raise ValueError(f"Query execution failed: {e}") from e
         
@@ -855,7 +844,6 @@ class GraphQLExecutor:
         try:
             mutation_node = self.query_parser.parse(mutation)
         except Exception as e:
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             logger.error(f"[{current_time}] Failed to parse GraphQL mutation: {e}")
             raise ValueError(f"Invalid GraphQL mutation: {e}") from e
         
@@ -863,7 +851,6 @@ class GraphQLExecutor:
         try:
             result = self._execute_mutation_node(mutation_node, variables or {})
         except Exception as e:
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             logger.error(f"[{current_time}] Failed to execute GraphQL mutation: {e}")
             raise ValueError(f"Mutation execution failed: {e}") from e
         

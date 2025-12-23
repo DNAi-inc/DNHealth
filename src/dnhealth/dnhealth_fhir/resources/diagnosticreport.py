@@ -30,7 +30,9 @@ class DiagnosticReportMedia:
     """
     
     comment: Optional[str] = None  # Comment about the image
-    link: Reference  # Reference to the image source (required)
+    # Note: link is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce link is provided.
+    link: Optional[Reference] = None  # Reference to the image source (required)
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
 
@@ -92,6 +94,5 @@ class DiagnosticReport(DomainResource):
         if self.code is None:
             raise ValueError("code is required for DiagnosticReport")
         
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")

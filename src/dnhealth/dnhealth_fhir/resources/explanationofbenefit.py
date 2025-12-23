@@ -138,25 +138,39 @@ class ExplanationOfBenefit(DomainResource):
     # Identifier
     identifier: List[Identifier] = field(default_factory=list)  # Business Identifier for the resource
     # Status
-    status: str  # active | cancelled | draft | entered-in-error (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # active | cancelled | draft | entered-in-error (required in FHIR)
     # Type
-    type: CodeableConcept  # Category or discipline (required)
+    # Note: type is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce type is provided.
+    type: Optional[CodeableConcept] = None  # Category or discipline (required)
     # Sub Type
     subType: Optional[CodeableConcept] = None  # More granular claim type
     # Use
-    use: str  # claim | preauthorization | predetermination (required)
+    # Note: use is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce use is provided.
+    use: Optional[str] = None  # claim | preauthorization | predetermination (required)
     # Patient
-    patient: Reference  # The recipient of the products and services (required)
+    # Note: patient is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce patient is provided.
+    patient: Optional[Reference] = None  # The recipient of the products and services (required)
     # Billable Period
     billablePeriod: Optional[Period] = None  # Relevant time frame for the claim
     # Created
-    created: str  # Creation date (required)
+    # Note: created is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce created is provided.
+    created: Optional[str] = None  # Creation date (required)
     # Enterer
     enterer: Optional[Reference] = None  # Author of the claim
     # Insurer
-    insurer: Reference  # Party responsible for reimbursement (required)
+    # Note: insurer is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce insurer is provided.
+    insurer: Optional[Reference] = None  # Party responsible for reimbursement (required)
     # Provider
-    provider: Reference  # Party responsible for the claim (required)
+    # Note: provider is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce provider is provided.
+    provider: Optional[Reference] = None  # Party responsible for the claim (required)
     # Priority
     priority: Optional[CodeableConcept] = None  # Desired processing urgency
     # Funds Reservation
@@ -178,7 +192,9 @@ class ExplanationOfBenefit(DomainResource):
     # Claim Response
     claimResponse: Optional[Reference] = None  # Claim response reference
     # Outcome
-    outcome: str  # queued | complete | error | partial (required)
+    # Note: outcome is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce outcome is provided.
+    outcome: Optional[str] = None  # queued | complete | error | partial (required)
     # Disposition
     disposition: Optional[str] = None  # Disposition Message
     # Pre Auth Ref

@@ -120,13 +120,19 @@ class MeasureReport(DomainResource):
     # Identifier
     identifier: List[Identifier] = field(default_factory=list)  # Additional identifier for the MeasureReport
     # Status
-    status: str  # complete | pending | error (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # complete | pending | error (required in FHIR)
     # Type
-    type: str  # individual | subject-list | summary | data-exchange (required)
+    # Note: type is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce type is provided.
+    type: Optional[str] = None  # individual | subject-list | summary | data-exchange (required)
     # Data Update Requirement
     dataUpdateRequirement: Optional[CodeableConcept] = None  # The data update requirement for the measure
     # Measure
-    measure: str  # What measure was calculated (canonical reference, required)
+    # Note: measure is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce measure is provided.
+    measure: Optional[str] = None  # What measure was calculated (canonical reference, required)
     # Subject
     subject: Optional[Reference] = None  # What individual(s) the report is for
     # Date
@@ -134,7 +140,9 @@ class MeasureReport(DomainResource):
     # Reporter
     reporter: Optional[Reference] = None  # Who is reporting the data
     # Period
-    period: Period  # What period the report covers (required)
+    # Note: period is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce period is provided.
+    period: Optional[Period] = None  # What period the report covers (required)
     # Improvement Notation
     improvementNotation: Optional[CodeableConcept] = None  # increase | decrease
     # Group

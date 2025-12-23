@@ -5,9 +5,10 @@
 # See the LICENSE files in the project root for details.
 
 """
-FHIR R4 Search parameter parsing and handling.
+FHIR Search parameter parsing and handling (version-aware).
 
 Supports parsing FHIR search parameters from query strings.
+Supports both R4 and R5 versions with version-aware search parameter handling.
 """
 
 import logging
@@ -79,7 +80,6 @@ class SearchParameters:
     def has_parameter(self, name: str) -> bool:
         """Check if a parameter exists."""
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         return any(p.name == name for p in self.parameters)
@@ -309,7 +309,6 @@ def parse_reverse_chain_parameter(param_name: str) -> tuple[Optional[str], Optio
             resource_type, parameter_name = parts
             return resource_type, parameter_name
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     return None, None
@@ -371,8 +370,6 @@ def parse_chained_search_parameter(param: SearchParameter) -> Optional[ChainedSe
     if resource_type:
 
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
         return ChainedSearchParameter(
             resource_type=resource_type,
             parameter=parameter_name,
@@ -400,10 +397,6 @@ SEARCH_MODIFIERS = {
 
 # Common search prefixes (for dates/numbers)
 SEARCH_PREFIXES = {
-
-        # Log completion timestamp at end of operation
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
     "eq",  # equals
     "ne",  # not equals
     "gt",  # greater than
@@ -511,10 +504,6 @@ def parse_search_string(query_string: str) -> SearchParameters:
                 search_params._pretty = values[0]
         elif key == "_fhirpath":
             # FHIRPath expression for query support
-
-                # Log completion timestamp at end of operation
-                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                logger.info(f"Current Time at End of Operations: {current_time}")
             if values and values[0]:
                 search_params._fhirpath = values[0]
         else:
@@ -560,10 +549,6 @@ def _parse_parameter(name: str, value: str) -> Optional[SearchParameter]:
         elif modifier_part in SEARCH_MODIFIERS:
             modifier = modifier_part
         else:
-
-                # Log completion timestamp at end of operation
-                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                logger.info(f"Current Time at End of Operations: {current_time}")
             # Unknown modifier, treat as modifier
             modifier = modifier_part
         
@@ -587,7 +572,6 @@ def _parse_parameter(name: str, value: str) -> Optional[SearchParameter]:
 def parse_search_url(url: str) -> SearchParameters:
     """
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     Parse a FHIR search URL into SearchParameters.

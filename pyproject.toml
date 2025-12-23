@@ -11,14 +11,14 @@ build-backend = "hatchling.build"
 [project]
 name = "dnhealth"
 version = "0.1.0"
-description = "Production-grade Python library for HL7v2, HL7v3, and FHIR R4 healthcare integration standards"
+description = "Production-grade Python library for HL7v2, HL7v3, FHIR R4, and FHIR R5 healthcare integration standards"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "Dual-licensed under the DNAi Free License v1.1 and the DNAi Commercial License v1.1. See LICENSE and LICENSE-COMMERCIAL files in the project root for details."}
 authors = [
     {name = "DNHealth Contributors"},
 ]
-keywords = ["hl7", "hl7v2", "hl7v3", "fhir", "healthcare", "integration"]
+keywords = ["hl7", "hl7v2", "hl7v3", "fhir", "fhir-r4", "fhir-r5", "healthcare", "integration"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Healthcare Industry",

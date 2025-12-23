@@ -95,7 +95,6 @@ def _get_field_value_by_path(resource: FHIRResource, path: str) -> Any:
             return None
     
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     return current
@@ -146,8 +145,6 @@ def apply_field_mapping(
         Transformed resource
 
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
     """
     return transform_resource(resource, field_mapping)
 
@@ -277,7 +274,6 @@ def map_resources(
     
     transformed_resources = []
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     for resource in resources:
@@ -301,7 +297,6 @@ def get_jsonpath_for_field(resource: FHIRResource, field_path: str) -> str:
         field_path: Field path (e.g., "name.family" or "name[0].family")
         
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     Returns:

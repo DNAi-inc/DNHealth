@@ -172,11 +172,15 @@ class RiskEvidenceSynthesis(MetadataResource):
     # Study Type
     studyType: Optional[CodeableConcept] = None  # Type of study
     # Population
-    population: Reference  # What population? (required)
+    # Note: population is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce population is provided.
+    population: Optional[Reference] = None  # What population? (required)
     # Exposure
     exposure: Optional[Reference] = None  # What exposure?
     # Outcome
-    outcome: Reference  # What outcome? (required)
+    # Note: outcome is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce outcome is provided.
+    outcome: Optional[Reference] = None  # What outcome? (required)
     # Sample Size
     sampleSize: Optional[RiskEvidenceSynthesisSampleSize] = None  # What sample size was involved
     # Risk Estimate

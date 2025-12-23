@@ -31,7 +31,9 @@ class InvoiceParticipant:
     """
     
     role: Optional[CodeableConcept] = None  # Type of involvement in creation of this Invoice
-    actor: Reference  # The individual, device or organization who participated (required)
+    # Note: actor is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce actor is provided.
+    actor: Optional[Reference] = None  # The individual, device or organization who participated (required)
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
 
@@ -44,7 +46,9 @@ class InvoiceLineItemPriceComponent:
     Factors affecting the line item price.
     """
     
-    type: str  # base | surcharge | deduction | discount | tax | informational (required)
+    # Note: type is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce type is provided.
+    type: Optional[str] = None  # base | surcharge | deduction | discount | tax | informational (required)
     code: Optional[CodeableConcept] = None  # Code identifying the specific component
     factor: Optional[float] = None  # Factor used for calculating this component
     amount: Optional[Money] = None  # Monetary amount associated with this component
@@ -81,7 +85,9 @@ class Invoice(DomainResource):
     # Identifier
     identifier: List[Identifier] = field(default_factory=list)  # Business Identifier for item
     # Status
-    status: str  # draft | issued | balanced | cancelled | entered-in-error (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # draft | issued | balanced | cancelled | entered-in-error (required in FHIR)
     # Cancelled Reason
     cancelledReason: Optional[str] = None  # Reason for cancellation of this Invoice
     # Type

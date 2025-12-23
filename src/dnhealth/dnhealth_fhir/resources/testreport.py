@@ -40,8 +40,12 @@ class TestReportParticipant:
     id: Optional[str] = None
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
-    type: str  # test-engine | client | server (required)
-    uri: str  # The uri of the participant (required)
+    # Note: type is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce type is provided.
+    type: Optional[str] = None  # test-engine | client | server (required)
+    # Note: uri is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce uri is provided.
+    uri: Optional[str] = None  # The uri of the participant (required)
     display: Optional[str] = None  # The display name of the participant
 
 
@@ -85,7 +89,9 @@ class TestReportSetupActionOperation:
     id: Optional[str] = None
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
-    result: str  # pass | skip | fail | warning | error (required)
+    # Note: result is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce result is provided.
+    result: Optional[str] = None  # pass | skip | fail | warning | error (required)
     message: Optional[str] = None  # A message associated with the result
     detail: Optional[str] = None  # A link to further details on the result
 
@@ -101,7 +107,9 @@ class TestReportSetupActionAssert:
     id: Optional[str] = None
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
-    result: str  # pass | skip | fail | warning | error (required)
+    # Note: result is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce result is provided.
+    result: Optional[str] = None  # pass | skip | fail | warning | error (required)
     message: Optional[str] = None  # A message associated with the result
     detail: Optional[str] = None  # A link to further details on the result
 
@@ -166,11 +174,17 @@ class TestReport(DomainResource):
     # Name
     name: Optional[str] = None  # Informal name of the executed TestScript
     # Status
-    status: str  # completed | in-progress | waiting | stopped | entered-in-error (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # completed | in-progress | waiting | stopped | entered-in-error (required)
     # Test Script
-    testScript: Reference  # Reference to TestScript that was executed (required)
+    # Note: testScript is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce testScript is provided.
+    testScript: Optional[Reference] = None  # Reference to TestScript that was executed (required)
     # Result
-    result: str  # pass | fail | pending (required)
+    # Note: result is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce result is provided.
+    result: Optional[str] = None  # pass | fail | pending (required)
     # Score
     score: Optional[float] = None  # The final score
     # Tester

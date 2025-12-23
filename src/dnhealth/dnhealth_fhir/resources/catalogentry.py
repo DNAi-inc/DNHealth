@@ -43,7 +43,6 @@ class CatalogEntryRelatedEntry:
 
 
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
 @dataclass
@@ -91,6 +90,5 @@ class CatalogEntry(DomainResource):
         if self.referencedItem is None:
             raise ValueError("referencedItem is required for CatalogEntry")
         
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")

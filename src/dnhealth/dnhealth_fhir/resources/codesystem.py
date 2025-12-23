@@ -209,8 +209,8 @@ def _extract_codes_from_concept(concept: CodeSystemConcept, codes: Set[str]) -> 
     Recursively extract codes from a concept and its nested concepts.
     
     Args:
-        concept: CodeSystemConcept object
-        codes: Set to add codes to
+        concept: Optional[CodeSystemConcept object] = None
+        codes: Optional[Set to add codes to] = None
     """
     if concept.code:
         codes.add(concept.code)

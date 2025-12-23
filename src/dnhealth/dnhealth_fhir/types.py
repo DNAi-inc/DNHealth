@@ -996,8 +996,32 @@ class Population(Element):
 
 
 # Import complex types from other modules for discoverability
-from dnhealth.dnhealth_fhir.structuredefinition import ElementDefinition
-from dnhealth.dnhealth_fhir.resources.base import Meta
+# Note: These imports are deferred to avoid circular import issues
+# Both ElementDefinition and Meta are imported from modules that depend on types.py
+# So we use lazy imports that happen after module initialization
+
+def _lazy_import_ElementDefinition():
+    """Lazy import of ElementDefinition to avoid circular imports."""
+    from dnhealth.dnhealth_fhir.structuredefinition import ElementDefinition
+    return ElementDefinition
+
+def _lazy_import_Meta():
+    """Lazy import of Meta to avoid circular imports."""
+    from dnhealth.dnhealth_fhir.resources.base import Meta
+    return Meta
+
+# For backward compatibility, try to import immediately, but handle circular import gracefully
+try:
+    from dnhealth.dnhealth_fhir.structuredefinition import ElementDefinition
+except (ImportError, AttributeError):
+    # If circular import occurs, ElementDefinition will be available via lazy import
+    ElementDefinition = None  # type: ignore
+
+try:
+    from dnhealth.dnhealth_fhir.resources.base import Meta
+except (ImportError, AttributeError):
+    # If circular import occurs, Meta will be available via lazy import
+    Meta = None  # type: ignore
 
 # Type aliases for complex types
 ElementDefinition = ElementDefinition  # ElementDefinition complex type
@@ -1024,11 +1048,16 @@ class Address(Element):
 
 @dataclass
 class Annotation(Element):
-    """FHIR Annotation data type."""
+    """FHIR Annotation data type.
+    
+    Note: In FHIR, text is required (1..1), but we make it Optional here
+    to work with Python dataclass field ordering requirements.
+    Validation should enforce that text is provided.
+    """
+    text: Optional[str] = None  # Required in FHIR spec, but Optional here for dataclass compatibility
     authorReference: Optional["Reference"] = None
     authorString: Optional[str] = None
     time: Optional[str] = None  # DateTime
-    text: str  # Required
 
 @dataclass
 class Attachment(Element):
@@ -1074,15 +1103,25 @@ class ContactPoint(Element):
 
 @dataclass
 class Contributor(Element):
-    """FHIR Contributor data type."""
-    type: str  # Required, Code
-    name: str  # Required
+    """FHIR Contributor data type.
+    
+    Note: type and name are required in FHIR, but made Optional here
+    for Python dataclass field ordering compatibility.
+    Validation should enforce these are provided.
+    """
+    type: Optional[str] = None  # Required in FHIR, Optional here for dataclass compatibility
+    name: Optional[str] = None  # Required in FHIR, Optional here for dataclass compatibility
     contact: List["ContactDetail"] = field(default_factory=list)
 
 @dataclass
 class DataRequirement(Element):
-    """FHIR DataRequirement data type."""
-    type: str  # Required, Code
+    """FHIR DataRequirement data type.
+    
+    Note: type is required in FHIR, but made Optional here
+    for Python dataclass field ordering compatibility.
+    Validation should enforce type is provided.
+    """
+    type: Optional[str] = None  # Required in FHIR, Optional here for dataclass compatibility
     profile: List[str] = field(default_factory=list)  # Canonical
     mustSupport: List[str] = field(default_factory=list)
     codeFilter: List[Any] = field(default_factory=list)
@@ -1122,8 +1161,13 @@ class DosageDoseAndRate(Element):
 
 @dataclass
 class ElementDefinition(Element):
-    """FHIR ElementDefinition data type."""
-    path: str  # Required
+    """FHIR ElementDefinition data type.
+    
+    Note: path is required in FHIR, but made Optional here
+    for Python dataclass field ordering compatibility.
+    Validation should enforce path is provided.
+    """
+    path: Optional[str] = None  # Required in FHIR, Optional here for dataclass compatibility
     representation: List[str] = field(default_factory=list)  # Code
     sliceName: Optional[str] = None  # String
     sliceIsConstraining: Optional[bool] = None
@@ -1323,10 +1367,15 @@ class ElementDefinition(Element):
 
 @dataclass
 class Expression(Element):
-    """FHIR Expression data type."""
+    """FHIR Expression data type.
+    
+    Note: language is required in FHIR, but made Optional here
+    for Python dataclass field ordering compatibility.
+    Validation should enforce language is provided.
+    """
     description: Optional[str] = None  # String
     name: Optional[str] = None  # Id
-    language: str  # Required, Code
+    language: Optional[str] = None  # Required in FHIR, Optional here for dataclass compatibility
     expression: Optional[str] = None  # String
     reference: Optional[str] = None  # Uri
 
@@ -1371,19 +1420,29 @@ class Money(Element):
 
 @dataclass
 class Narrative(Element):
-    """FHIR Narrative data type."""
-    status: str  # Required, Code
-    div: str  # Required, Xhtml
+    """FHIR Narrative data type.
+    
+    Note: status and div are required in FHIR, but made Optional here
+    for Python dataclass field ordering compatibility.
+    Validation should enforce these are provided.
+    """
+    status: Optional[str] = None  # Required in FHIR, Optional here for dataclass compatibility
+    div: Optional[str] = None  # Required in FHIR, Optional here for dataclass compatibility
 
 @dataclass
 class ParameterDefinition(Element):
-    """FHIR ParameterDefinition data type."""
+    """FHIR ParameterDefinition data type.
+    
+    Note: use and type are required in FHIR, but made Optional here
+    for Python dataclass field ordering compatibility.
+    Validation should enforce these are provided.
+    """
     name: Optional[str] = None  # Code
-    use: str  # Required, Code
+    use: Optional[str] = None  # Required in FHIR, Optional here for dataclass compatibility
     min: Optional[int] = None  # Integer
     max: Optional[str] = None  # String
     documentation: Optional[str] = None  # String
-    type: str  # Required, Code
+    type: Optional[str] = None  # Required in FHIR, Optional here for dataclass compatibility
     profile: Optional[str] = None  # Canonical
 
 @dataclass
@@ -1452,8 +1511,13 @@ class Reference(Element):
 
 @dataclass
 class RelatedArtifact(Element):
-    """FHIR RelatedArtifact data type."""
-    type: str  # Required, Code
+    """FHIR RelatedArtifact data type.
+    
+    Note: type is required in FHIR, but made Optional here
+    for Python dataclass field ordering compatibility.
+    Validation should enforce type is provided.
+    """
+    type: Optional[str] = None  # Required in FHIR, Optional here for dataclass compatibility
     label: Optional[str] = None  # String
     display: Optional[str] = None  # String
     citation: Optional[str] = None  # Markdown
@@ -1463,21 +1527,31 @@ class RelatedArtifact(Element):
 
 @dataclass
 class SampledData(Element):
-    """FHIR SampledData data type."""
-    origin: "Quantity"  # Required
-    period: float  # Required, Decimal
+    """FHIR SampledData data type.
+    
+    Note: origin, period, and dimensions are required in FHIR, but made Optional here
+    for Python dataclass field ordering compatibility.
+    Validation should enforce these are provided.
+    """
+    origin: Optional["Quantity"] = None  # Required in FHIR, Optional here for dataclass compatibility
+    period: Optional[float] = None  # Required in FHIR, Optional here for dataclass compatibility
     factor: Optional[float] = None  # Decimal
     lowerLimit: Optional[float] = None  # Decimal
     upperLimit: Optional[float] = None  # Decimal
-    dimensions: int  # Required, PositiveInt
+    dimensions: Optional[int] = None  # Required in FHIR, Optional here for dataclass compatibility
     data: Optional[str] = None  # String
 
 @dataclass
 class Signature(Element):
-    """FHIR Signature data type."""
-    type: List["Coding"] = field(default_factory=list)  # Required
-    when: str  # Required, Instant
-    who: "Reference"  # Required
+    """FHIR Signature data type.
+    
+    Note: type, when, and who are required in FHIR, but when and who
+    are made Optional here for Python dataclass field ordering compatibility.
+    Validation should enforce these are provided.
+    """
+    type: List["Coding"] = field(default_factory=list)  # Required in FHIR
+    when: Optional[str] = None  # Required in FHIR, Optional here for dataclass compatibility
+    who: Optional["Reference"] = None  # Required in FHIR, Optional here for dataclass compatibility
     onBehalfOf: Optional["Reference"] = None
     targetFormat: Optional[str] = None  # Code
     sigFormat: Optional[str] = None  # Code
@@ -1492,8 +1566,13 @@ class Timing(BackboneElement):
 
 @dataclass
 class TriggerDefinition(Element):
-    """FHIR TriggerDefinition data type."""
-    type: str  # Required, Code
+    """FHIR TriggerDefinition data type.
+    
+    Note: type is required in FHIR, but made Optional here
+    for Python dataclass field ordering compatibility.
+    Validation should enforce type is provided.
+    """
+    type: Optional[str] = None  # Required in FHIR, Optional here for dataclass compatibility
     name: Optional[str] = None  # String
     timingTiming: Optional["Timing"] = None
     timingReference: Optional["Reference"] = None
@@ -1530,10 +1609,14 @@ class ProductShelfLife(Element):
     
     The shelf-life and storage information for a medicinal product item or container can be described
     using this class.
+    
+    Note: type and period are required in FHIR, but made Optional here
+    for Python dataclass field ordering compatibility.
+    Validation should enforce these are provided.
     '''
     identifier: Optional["Identifier"] = None
-    type: "CodeableConcept"  # Required
-    period: "Quantity"  # Required
+    type: Optional["CodeableConcept"] = None  # Required in FHIR, Optional here for dataclass compatibility
+    period: Optional["Quantity"] = None  # Required in FHIR, Optional here for dataclass compatibility
     specialPrecautionsForStorage: List["CodeableConcept"] = field(default_factory=list)
 
 
@@ -1547,11 +1630,19 @@ class MarketingStatus(Element):
     '''
     country: Optional["CodeableConcept"] = None
     jurisdiction: Optional["CodeableConcept"] = None
-    status: "CodeableConcept"  # Required
+    status: Optional["CodeableConcept"] = None  # Required in FHIR, Optional here for dataclass compatibility
     dateRange: Optional["Period"] = None
     restoreDate: Optional[str] = None  # ISO 8601 dateTime
-    """FHIR UsageContext data type."""
-    code: "Coding"  # Required
+
+@dataclass
+class UsageContext(Element):
+    """FHIR UsageContext data type.
+    
+    Note: code is required in FHIR, but made Optional here
+    for Python dataclass field ordering compatibility.
+    Validation should enforce code is provided.
+    """
+    code: Optional["Coding"] = None  # Required in FHIR, Optional here for dataclass compatibility
     valueCodeableConcept: Optional["CodeableConcept"] = None
     valueQuantity: Optional["Quantity"] = None
     valueRange: Optional["Range"] = None

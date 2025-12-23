@@ -50,7 +50,9 @@ class DetectedIssue(DomainResource):
     # Identifier
     identifier: List[Identifier] = field(default_factory=list)  # Unique id for the detected issue
     # Status
-    status: str  # registered | preliminary | final | amended | corrected | cancelled | entered-in-error | unknown (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # registered | preliminary | final | amended | corrected | cancelled | entered-in-error | unknown (required in FHIR)
     # Category
     category: Optional[CodeableConcept] = None  # Issue Category, e.g. drug-drug, duplicate therapy, etc.
     # Severity

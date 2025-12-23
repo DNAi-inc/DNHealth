@@ -53,7 +53,6 @@ class Bundle(FHIRResource):
 
 
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
 @dataclass

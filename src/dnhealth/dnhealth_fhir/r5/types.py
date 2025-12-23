@@ -1,0 +1,126 @@
+# Copyright 2025 DNAi inc.
+
+# Dual-licensed under the DNAi Free License v1.1 and the
+# DNAi Commercial License v1.1.
+# See the LICENSE files in the project root for details.
+
+"""
+FHIR R5 primitive and complex data types.
+
+R5 data types are largely compatible with R4. This module re-exports
+R4 types for compatibility, with potential R5-specific additions as needed.
+"""
+
+# R5 uses the same data types as R4 for compatibility
+# Re-export all R4 types
+from dnhealth.dnhealth_fhir.types import (
+    # Base classes
+    Element,
+    BackboneElement,
+    FHIRPrimitive,
+    FHIRString,
+    FHIRBoolean,
+    FHIRInteger,
+    FHIRDecimal,
+    FHIRDate,
+    FHIRDateTime,
+    FHIRUri,
+    FHIRCode,
+    FHIRId,
+    FHIRInstant,
+    FHIRTime,
+    FHIRPositiveInt,
+    FHIRBase64Binary,
+    FHIRUnsignedInt,
+    FHIRMarkdown,
+    FHIRUrl,
+    FHIRCanonical,
+    FHIROid,
+    FHIRUuid,
+    # Complex types
+    Extension,
+    Narrative,
+    Identifier,
+    HumanName,
+    Address,
+    ContactPoint,
+    Timing,
+    CodeableConcept,
+    Coding,
+    Quantity,
+    Age,
+    Distance,
+    Duration,
+    Count,
+    Money,
+    Range,
+    Period,
+    Ratio,
+    SampledData,
+    Signature,
+    Reference,
+    Attachment,
+    Annotation,
+    RelatedArtifact,
+    UsageContext,
+    ParameterDefinition,
+    DataRequirement,
+    TriggerDefinition,
+    Expression,
+)
+
+__all__ = [
+    # Base classes
+    "Element",
+    "BackboneElement",
+    "FHIRPrimitive",
+    "FHIRString",
+    "FHIRBoolean",
+    "FHIRInteger",
+    "FHIRDecimal",
+    "FHIRDate",
+    "FHIRDateTime",
+    "FHIRUri",
+    "FHIRCode",
+    "FHIRId",
+    "FHIRInstant",
+    "FHIRTime",
+    "FHIRPositiveInt",
+    "FHIRBase64Binary",
+    "FHIRUnsignedInt",
+    "FHIRMarkdown",
+    "FHIRUrl",
+    "FHIRCanonical",
+    "FHIROid",
+    "FHIRUuid",
+    # Complex types
+    "Extension",
+    "Narrative",
+    "Identifier",
+    "HumanName",
+    "Address",
+    "ContactPoint",
+    "Timing",
+    "CodeableConcept",
+    "Coding",
+    "Quantity",
+    "Age",
+    "Distance",
+    "Duration",
+    "Count",
+    "Money",
+    "Range",
+    "Period",
+    "Ratio",
+    "SampledData",
+    "Signature",
+    "Reference",
+    "Attachment",
+    "Annotation",
+    "RelatedArtifact",
+    "UsageContext",
+    "ParameterDefinition",
+    "DataRequirement",
+    "TriggerDefinition",
+    "Expression",
+]

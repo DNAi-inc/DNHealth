@@ -35,9 +35,13 @@ class Endpoint(DomainResource):
     # Identifier
     identifier: List[Identifier] = field(default_factory=list)  # Identifies this endpoint across multiple systems
     # Status
-    status: str  # active | suspended | error | off | entered-in-error | test (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # active | suspended | error | off | entered-in-error | test (required in FHIR)
     # Connection Type
-    connectionType: Coding  # Protocol/Profile/Standard to be used with this endpoint connection (required)
+    # Note: connectionType is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce connectionType is provided.
+    connectionType: Optional[Coding] = None  # Protocol/Profile/Standard to be used with this endpoint connection (required)
     # Name
     name: Optional[str] = None  # A name that this endpoint can be identified by
     # Managing Organization
@@ -51,7 +55,9 @@ class Endpoint(DomainResource):
     # Payload MIME Type
     payloadMimeType: List[str] = field(default_factory=list)  # Mimetype to send. If not specified, the content could be anything (including no payload)
     # Address
-    address: str  # The technical base address for connecting to this endpoint (required)
+    # Note: address is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce address is provided.
+    address: Optional[str] = None  # The technical base address for connecting to this endpoint (required)
     # Header
     header: List[str] = field(default_factory=list)  # Additional headers / information to send as part of the notification
 

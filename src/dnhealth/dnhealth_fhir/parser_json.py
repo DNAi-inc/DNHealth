@@ -5,9 +5,10 @@
 # See the LICENSE files in the project root for details.
 
 """
-FHIR R4 JSON parser.
+FHIR JSON parser (version-aware).
 
 Parses FHIR JSON resources into Python dataclass models.
+Supports both R4 and R5 versions with automatic version detection.
 Supports optional caching for improved performance.
 """
 
@@ -26,8 +27,16 @@ from dnhealth.dnhealth_fhir.resources.condition import Condition
 from dnhealth.dnhealth_fhir.resources.operationoutcome import OperationOutcome
 from dnhealth.dnhealth_fhir.cache import ResourceCache, get_default_cache
 from dnhealth.dnhealth_fhir.types import Extension
+from dnhealth.dnhealth_fhir.version import (
+    detect_version_from_json,
+    detect_version_from_json_string,
+    FHIRVersion,
+    normalize_version,
+)
+from dnhealth.dnhealth_fhir.resource_registry import get_resource_class
 
-# Resource type mapping
+# Resource type mapping (deprecated - use get_resource_class instead)
+# Kept for backward compatibility with existing code
 RESOURCE_TYPE_MAP = {
     "Patient": Patient,
     "Observation": Observation,
@@ -75,6 +84,33 @@ def _parse_primitive_value(data: Any, field_name: str) -> Any:
             return data["value"]
         # Otherwise return as-is (complex type)
         return data
+    # Tolerance: if array is provided for primitive field, extract first item
+    # This handles edge cases where JSON has arrays but schema expects primitive
+    # Common in R5 where some fields changed structure
+    if isinstance(data, list):
+        if len(data) == 0:
+            return None
+        elif len(data) == 1:
+            # Single-item array - extract the item
+            item = data[0]
+            # If item is a dict with "value" field, extract the value
+            if isinstance(item, dict) and "value" in item:
+                return item["value"]
+            # Otherwise return the item itself if it's a primitive
+            if isinstance(item, (str, int, float, bool)):
+                return item
+            # If it's a dict without "value", this might be an error but be tolerant
+            return item
+        else:
+            # Multi-item array - extract first item's value if it's a dict with "value"
+            first_item = data[0]
+            if isinstance(first_item, dict) and "value" in first_item:
+                return first_item["value"]
+            # Otherwise, this is an error but provide helpful message
+            raise FHIRParseError(
+                f"Invalid primitive value for {field_name}: expected primitive or single-item array, "
+                f"got array with {len(data)} items. First item: {first_item}"
+            )
     raise FHIRParseError(f"Invalid primitive value for {field_name}: {data}")
 
 
@@ -130,13 +166,90 @@ def _parse_field(data: Any, field_type: Type, field_name: str) -> Any:
 
     # Handle dataclass types (complex types)
     if hasattr(field_type, "__dataclass_fields__"):
-        return _parse_dataclass(data, field_type, field_name)
+        # Special handling for Reference when data is a string
+        # FHIR allows Reference fields to be represented as just a string (the reference URL)
+        if field_type.__name__ == "Reference" and isinstance(data, str):
+            from dnhealth.dnhealth_fhir.types import Reference
+            return Reference(reference=data)
+        
+        # Special handling for Reference when data is a list (should be List[Reference])
+        if field_type.__name__ == "Reference" and isinstance(data, list):
+            from dnhealth.dnhealth_fhir.types import Reference
+            # Convert list of strings/dicts to list of References
+            references = []
+            for item in data:
+                if isinstance(item, str):
+                    references.append(Reference(reference=item))
+                elif isinstance(item, dict):
+                    references.append(_parse_dataclass(item, Reference, field_name, version=None))
+                else:
+                    references.append(item)
+            # Return first item if single-item list, otherwise return list
+            # Actually, if field_type is Reference (not List[Reference]), this is an error
+            # But we'll be tolerant and return the first item
+            if len(references) == 1:
+                return references[0]
+            raise FHIRParseError(f"Expected single Reference for {field_name}, got list with {len(references)} items")
+        
+        # Special handling for CodeableConcept when data is a list
+        # This might indicate the field should be List[CodeableConcept] instead
+        if field_type.__name__ == "CodeableConcept" and isinstance(data, list):
+            from dnhealth.dnhealth_fhir.types import CodeableConcept
+            # If it's a list, try to parse each item as CodeableConcept
+            # But if field_type is CodeableConcept (not List[CodeableConcept]), this is an error
+            # Be tolerant and return the first item if single-item list
+            if len(data) == 1:
+                return _parse_dataclass(data[0], CodeableConcept, field_name, version=None)
+            raise FHIRParseError(f"Expected single CodeableConcept for {field_name}, got list with {len(data)} items")
+        
+        # Special handling for Attachment when data is a list (R5 allows arrays)
+        # This is common in R5 where fields that were single values in R4 became arrays
+        if field_type.__name__ == "Attachment" and isinstance(data, list):
+            from dnhealth.dnhealth_fhir.types import Attachment
+            # Be tolerant: if single-item list, return the first item
+            # This handles R5 structure where sourceAttachment is an array
+            if len(data) == 1:
+                return _parse_dataclass(data[0], Attachment, field_name, version=None)
+            raise FHIRParseError(f"Expected single Attachment for {field_name}, got list with {len(data)} items")
+        
+        # Special handling for Identifier when data is a list (R5 allows arrays)
+        # This is common in R5 where fields that were single values in R4 became arrays
+        if field_type.__name__ == "Identifier" and isinstance(data, list):
+            from dnhealth.dnhealth_fhir.types import Identifier
+            # Be tolerant: if single-item list, return the first item
+            # This handles R5 structure where identifier can be an array
+            if len(data) == 1:
+                return _parse_dataclass(data[0], Identifier, field_name, version=None)
+            raise FHIRParseError(f"Expected single Identifier for {field_name}, got list with {len(data)} items")
+        
+        # General tolerance: if a list is provided but a dict is expected,
+        # try to extract the first item if it's a single-item list
+        # This handles edge cases where JSON has arrays but the schema expects single objects
+        # Common in R5 where some fields changed from single to array, or vice versa
+        if isinstance(data, list):
+            if len(data) == 1 and isinstance(data[0], dict):
+                # Single-item list with dict - extract first item
+                # This handles cases like DocumentReference.context, Organization.contact.name, etc.
+                return _parse_dataclass(data[0], field_type, field_name, version=None)
+            elif len(data) > 0:
+                # Multi-item list - this is an error, but provide helpful message
+                raise FHIRParseError(
+                    f"Expected single {field_type.__name__} for {field_name}, got list with {len(data)} items. "
+                    f"First item type: {type(data[0]).__name__}"
+                )
+            else:
+                # Empty list - return None for optional fields
+                return None
+        
+        # Note: version parameter not available in _parse_field, will use None
+        # This is acceptable as version is mainly needed for resource class lookup
+        return _parse_dataclass(data, field_type, field_name, version=None)
 
     # Handle primitive types
     return _parse_primitive_value(data, field_name)
 
 
-def _parse_dataclass(data: Dict[str, Any], cls: Type, context: str = "") -> Any:
+def _parse_dataclass(data: Dict[str, Any], cls: Type, context: str = "", version: Optional[FHIRVersion] = None) -> Any:
     """
     Parse a dataclass from JSON data.
 
@@ -144,6 +257,7 @@ def _parse_dataclass(data: Dict[str, Any], cls: Type, context: str = "") -> Any:
         data: JSON dictionary
         cls: Dataclass type
         context: Context for error reporting
+        version: Optional FHIR version for version-aware parsing
 
     Returns:
         Parsed dataclass instance
@@ -228,8 +342,14 @@ def _parse_dataclass(data: Dict[str, Any], cls: Type, context: str = "") -> Any:
                             # Each contained resource must have resourceType
                             contained_resource_type = contained_data.get("resourceType")
                             if contained_resource_type:
-                                # Parse the contained resource
-                                contained_cls = RESOURCE_TYPE_MAP.get(contained_resource_type)
+                                # Parse the contained resource using version-aware registry
+                                # Use the same version as the parent resource
+                                contained_cls = get_resource_class(contained_resource_type, version)
+                                
+                                # Fallback to legacy RESOURCE_TYPE_MAP
+                                if contained_cls is None:
+                                    contained_cls = RESOURCE_TYPE_MAP.get(contained_resource_type)
+                                
                                 if contained_cls is None:
                                     # Try lazy loading
                                     if contained_resource_type == "StructureDefinition":
@@ -239,17 +359,17 @@ def _parse_dataclass(data: Dict[str, Any], cls: Type, context: str = "") -> Any:
                                         from dnhealth.dnhealth_fhir.resources.valueset import ValueSet
                                         contained_cls = ValueSet
                                     elif contained_resource_type == "CodeSystem":
-                                        from dnhealth.dnhealth_fhir.codesystem_resource import CodeSystem
+                                        from dnhealth.dnhealth_fhir.resources.codesystem import CodeSystem
                                         contained_cls = CodeSystem
                                     elif contained_resource_type == "ConceptMap":
-                                        from dnhealth.dnhealth_fhir.conceptmap_resource import ConceptMap
+                                        from dnhealth.dnhealth_fhir.resources.conceptmap import ConceptMap
                                         contained_cls = ConceptMap
                                     else:
                                         # Use generic FHIRResource if type not found
                                         contained_cls = FHIRResource
                                 
                                 try:
-                                    contained_resource = _parse_dataclass(contained_data, contained_cls, f"contained.{contained_resource_type}")
+                                    contained_resource = _parse_dataclass(contained_data, contained_cls, f"contained.{contained_resource_type}", version=version)
                                     contained_resources.append(contained_resource)
                                 except Exception as e:
                                     raise FHIRParseError(f"Error parsing contained resource {contained_resource_type}: {e}") from e
@@ -270,9 +390,8 @@ def _parse_dataclass(data: Dict[str, Any], cls: Type, context: str = "") -> Any:
         if primitive_extensions:
             instance._primitive_extensions = primitive_extensions
 
-    # Log completion timestamp at end of operation
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logger.info(f"Current Time at End of Operations: {current_time}")
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        logger.info(f"Current Time at End of Operations: {current_time}")
         return instance
     except Exception as e:
         raise FHIRParseError(f"Error creating {cls.__name__}: {e}") from e
@@ -283,15 +402,21 @@ def parse_fhir_json(
     resource_type: Type[T] = None,
     cache: Optional[ResourceCache] = None,
     use_cache: bool = True,
+    fhir_version: Optional[str] = None,
 ) -> T:
     """
     Parse FHIR JSON string into a resource object.
+    
+    Version-aware parser that supports both R4 and R5. Automatically detects
+    version from resource data, or uses provided version parameter.
 
     Args:
         json_str: FHIR JSON string
         resource_type: Optional resource type (if None, inferred from resourceType field)
         cache: Optional ResourceCache instance (defaults to global cache if use_cache=True)
         use_cache: Whether to use caching (default: True)
+        fhir_version: Optional FHIR version override ("4.0", "R4", "5.0", "R5", etc.)
+                     If None, version is auto-detected from resource data
 
     Returns:
         Parsed FHIR resource object
@@ -315,20 +440,32 @@ def parse_fhir_json(
     if not isinstance(data, dict):
         raise FHIRParseError("FHIR resource must be a JSON object")
 
-    # Determine resource type
+    # Detect or normalize version
+    if fhir_version is not None:
+        version = normalize_version(fhir_version)
+    else:
+        version = detect_version_from_json(data)
+    
+    # Determine resource type using version-aware registry
     if resource_type is None:
         resource_type_name = data.get("resourceType")
         if not resource_type_name:
             raise FHIRParseError("Missing resourceType field")
-        resource_type = RESOURCE_TYPE_MAP.get(resource_type_name)
+        
+        # Use version-aware resource registry
+        resource_type = get_resource_class(resource_type_name, version)
+        
+        # Fallback to legacy RESOURCE_TYPE_MAP for backward compatibility
         if resource_type is None:
-            # Try StructureDefinition as fallback
-            if resource_type_name == "StructureDefinition":
-                from dnhealth.dnhealth_fhir.structuredefinition import StructureDefinition
-                resource_type = StructureDefinition
-            elif resource_type_name == "ValueSet":
-                from dnhealth.dnhealth_fhir.resources.valueset import ValueSet
-                resource_type = ValueSet
+            resource_type = RESOURCE_TYPE_MAP.get(resource_type_name)
+            if resource_type is None:
+                # Try StructureDefinition as fallback
+                if resource_type_name == "StructureDefinition":
+                    from dnhealth.dnhealth_fhir.structuredefinition import StructureDefinition
+                    resource_type = StructureDefinition
+                elif resource_type_name == "ValueSet":
+                    from dnhealth.dnhealth_fhir.resources.valueset import ValueSet
+                    resource_type = ValueSet
             elif resource_type_name == "CodeSystem":
                 from dnhealth.dnhealth_fhir.codesystem_resource import CodeSystem
                 resource_type = CodeSystem
@@ -337,9 +474,12 @@ def parse_fhir_json(
                 resource_type = ConceptMap
             else:
                 raise FHIRParseError(f"Unknown resource type: {resource_type_name}")
+    else:
+        # If resource_type is provided, get resource_type_name from the resource type or data
+        resource_type_name = data.get("resourceType") or getattr(resource_type, "__name__", "Unknown")
 
     # Parse resource
-    resource = _parse_dataclass(data, resource_type, resource_type_name)
+    resource = _parse_dataclass(data, resource_type, resource_type_name, version=version)
 
     # Cache the parsed resource if caching is enabled
     if use_cache and cache is not None:
@@ -347,7 +487,7 @@ def parse_fhir_json(
 
     # Log completion timestamp at end of operation
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logger.debug(f"[{current_time}] FHIR JSON parsing completed successfully")
+    logger.debug(f"[{current_time}] FHIR JSON parsing completed successfully (version: {version.value})")
     logger.debug(f"[{current_time}] Current Time at End of Operations: {current_time}")
 
     return resource

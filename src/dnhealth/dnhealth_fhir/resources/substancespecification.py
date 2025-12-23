@@ -22,7 +22,6 @@ from dnhealth.dnhealth_fhir.types import (
     Quantity,
     Ratio,
     Attachment,
-    String,
 )
 
 

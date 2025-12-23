@@ -33,7 +33,9 @@ class ImmunizationRecommendationRecommendation:
     vaccineCode: List[CodeableConcept] = field(default_factory=list)  # Vaccine(s) or vaccine group that pertain to the recommendation
     targetDisease: Optional[CodeableConcept] = None  # Disease to be immunized against
     contraindicatedVaccineCode: List[CodeableConcept] = field(default_factory=list)  # Vaccine which is contraindicated to fulfill the recommendation
-    forecastStatus: CodeableConcept  # Vaccine recommendation status (required)
+    # Note: forecastStatus is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce forecastStatus is provided.
+    forecastStatus: Optional[CodeableConcept] = None  # Vaccine recommendation status (required)
     forecastReason: List[CodeableConcept] = field(default_factory=list)  # Vaccine administration status reason
     dateCriterion: List[Any] = field(default_factory=list)  # Dates governing proposed immunization
     description: Optional[str] = None  # Protocol details
@@ -61,9 +63,13 @@ class ImmunizationRecommendation(DomainResource):
     # Identifier
     identifier: List[Identifier] = field(default_factory=list)  # Business identifier
     # Patient
-    patient: Reference  # Who this profile is for (required)
+    # Note: patient is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce patient is provided.
+    patient: Optional[Reference] = None  # Who this profile is for (required)
     # Date
-    date: str  # Date recommendation created (required)
+    # Note: date is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce date is provided.
+    date: Optional[str] = None  # Date recommendation created (required)
     # Authority
     authority: Optional[Reference] = None  # Who is responsible for protocol
     # Recommendation

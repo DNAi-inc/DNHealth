@@ -5,10 +5,11 @@
 # See the LICENSE files in the project root for details.
 
 """
-FHIR R4 FHIRPath constraint evaluation.
+FHIR FHIRPath constraint evaluation (version-aware).
 
 Provides basic FHIRPath expression evaluation for constraint validation.
 FHIRPath is a path-based navigation and extraction language for FHIR resources.
+Supports both R4 and R5 versions with version-aware FHIRPath evaluation.
 """
 
 from typing import Dict, List, Optional, Set, Any, Union
@@ -57,10 +58,6 @@ def parse_constraint(constraint_data: Dict[str, Any]) -> FHIRPathConstraint:
         source=constraint_data.get("source")
     )
 
-
-            # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
 
 def evaluate_fhirpath_expression(
     expression: str,
@@ -438,10 +435,6 @@ def _parse_literal(value_str: str) -> Union[str, int, float, bool, None]:
     try:
         if "." in value_str:
             return float(value_str)
-
-                # Log completion timestamp at end of operation
-                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                logger.info(f"Current Time at End of Operations: {current_time}")
         return int(value_str)
     except ValueError:
         pass
@@ -479,7 +472,6 @@ def validate_constraint(
         
         if not is_valid:
             error_msg = constraint.human or f"Constraint '{constraint.key}' failed: {constraint.expression}"
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             logger.info(f"[{current_time}] Constraint validation completed: {constraint.key} - FAILED")
             return False, error_msg
         

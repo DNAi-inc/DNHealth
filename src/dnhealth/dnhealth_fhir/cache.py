@@ -60,7 +60,6 @@ class ResourceCache:
             SHA256 hash of the content
         """
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         return hashlib.sha256(content.encode("utf-8")).hexdigest()
@@ -184,10 +183,6 @@ _default_cache: Optional[ResourceCache] = None
 _cache_lock = Lock()
 
 
-
-    # Log completion timestamp at end of operation
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logger.info(f"Current Time at End of Operations: {current_time}")
 def get_default_cache() -> ResourceCache:
     """
     Get the default global cache instance.

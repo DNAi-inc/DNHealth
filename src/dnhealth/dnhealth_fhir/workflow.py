@@ -114,8 +114,6 @@ class WorkflowEngine:
         )
 
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
         
         return request_group
 
@@ -206,8 +204,6 @@ class WorkflowEngine:
         elapsed = time.time() - start_time
 
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
         logger.info(
             f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] RequestGroup execution "
             f"completed in {elapsed:.3f}s (generated {len(tasks)} tasks)"
@@ -315,8 +311,6 @@ class WorkflowEngine:
         from dnhealth.dnhealth_fhir.resources.requestgroup import RequestGroupAction
 
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
         
         return RequestGroupAction(
             id=plan_action.id,
@@ -338,8 +332,6 @@ class WorkflowEngine:
         """Create Task from RequestGroupAction."""
 
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
         task = Task(
             resourceType="Task",
             status="ready",

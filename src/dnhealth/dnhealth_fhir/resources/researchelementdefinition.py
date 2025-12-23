@@ -137,7 +137,9 @@ class ResearchElementDefinition(MetadataResource):
     # Library
     library: List[str] = field(default_factory=list)  # Logic used by the research element definition (canonical references)
     # Type
-    type: str  # Population | Exposure | Outcome (required)
+    # Note: type is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce type is provided.
+    type: Optional[str] = None  # Population | Exposure | Outcome (required)
     # Variable Type
     variableType: Optional[CodeableConcept] = None  # dichotomous | continuous | descriptive
     # Characteristic

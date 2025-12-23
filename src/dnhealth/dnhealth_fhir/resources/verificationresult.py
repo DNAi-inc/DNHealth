@@ -59,7 +59,9 @@ class VerificationResultValidator:
     id: Optional[str] = None
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
-    organization: Reference  # Reference to the organization validating information (required)
+    # Note: organization is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce organization is provided.
+    organization: Optional[Reference] = None  # Reference to the organization validating information (required)
     identityCertificate: Optional[str] = None  # A digital identity certificate associated with the validator
     attestationSignature: Optional[Signature] = None  # Validator signature
 
@@ -108,7 +110,6 @@ class VerificationResult(DomainResource):
         if self.status is None:
             raise ValueError("status is required")
         
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.debug(f"Current Time at End of Operations: {current_time}")
 

@@ -19,7 +19,6 @@ from dnhealth.dnhealth_fhir.types import (
     Identifier,
     Reference,
     CodeableConcept,
-    Integer,
     Quantity,
 )
 
@@ -64,7 +63,9 @@ class MolecularSequenceQuality:
     such as phred quality score.
     """
 
-    type: str  # indel | snp | unknown (required)
+    # Note: type is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce type is provided.
+    type: Optional[str] = None  # indel | snp | unknown (required)
     standardSequence: Optional[CodeableConcept] = None
     start: Optional[int] = None
     end: Optional[int] = None
@@ -87,7 +88,9 @@ class MolecularSequenceRepository:
     Configurations of the external repository.
     """
 
-    type: str  # directlink | openapi | login | oauth | other (required)
+    # Note: type is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce type is provided.
+    type: Optional[str] = None  # directlink | openapi | login | oauth | other (required)
     url: Optional[str] = None
     name: Optional[str] = None
     datasetId: Optional[str] = None
@@ -146,7 +149,9 @@ class MolecularSequence(FHIRResource):
     # Type
     type: Optional[str] = None  # aa | dna | rna
     # Coordinate System
-    coordinateSystem: int  # Base number of coordinate system (0-based coordinate system) (required)
+    # Note: coordinateSystem is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce coordinateSystem is provided.
+    coordinateSystem: Optional[int] = None  # Base number of coordinate system (0-based coordinate system) (required)
     # Patient
     patient: Optional[Reference] = None
     # Specimen

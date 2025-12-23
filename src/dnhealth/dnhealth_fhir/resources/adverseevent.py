@@ -11,7 +11,7 @@ AdverseEvent describes an event that occurred during the care of a patient.
 """
 
 from dataclasses import dataclass, field
-from typing import List, Optional, Any
+from typing import Any, Dict, List, Optional
 
 from dnhealth.dnhealth_fhir.resources.base import DomainResource
 from dnhealth.dnhealth_fhir.types import Extension, Identifier, CodeableConcept, Reference, Period

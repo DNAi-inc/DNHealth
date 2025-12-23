@@ -35,12 +35,16 @@ class QuestionnaireItem:
     the questionnaire.
     """
 
-    linkId: str  # Unique id for item in questionnaire (required)
+    # Note: linkId is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce linkId is provided.
+    linkId: Optional[str] = None  # Unique id for item in questionnaire (required)
     definition: Optional[str] = None  # ElementDefinition - details of the item
     code: List[CodeableConcept] = field(default_factory=list)  # Corresponding concept for this item in a terminology
     prefix: Optional[str] = None  # E.g. "1.1", "2.5.3"
     text: Optional[str] = None  # Primary text for the item
-    type: str  # group | display | boolean | decimal | integer | date | dateTime | time | string | text | url | choice | open-choice | attachment | reference | quantity (required)
+    # Note: type is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce type is provided.
+    type: Optional[str] = None  # group | display | boolean | decimal | integer | date | dateTime | time | string | text | url | choice | open-choice | attachment | reference | quantity (required)
     enableWhen: List[Any] = field(default_factory=list)  # Only allow data when
     enableBehavior: Optional[str] = None  # all | any
     required: Optional[bool] = None  # Whether the item must be included in data results
@@ -78,7 +82,9 @@ class Questionnaire(CanonicalResource):
     # Derived from
     derivedFrom: List[str] = field(default_factory=list)
     # Status
-    status: str  # draft | active | retired | unknown (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # draft | active | retired | unknown (required in FHIR)
     # Experimental
     experimental: Optional[bool] = None
     # Subject type

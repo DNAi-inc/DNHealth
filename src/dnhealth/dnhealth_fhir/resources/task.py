@@ -5,9 +5,15 @@
 # See the LICENSE files in the project root for details.
 
 """
-FHIR R4 Task resource.
+FHIR Task resource (R4/R5 compatible).
 
-Complete Task resource with all R4 elements.
+Complete Task resource implementation with all R4 elements.
+This resource is fully compatible with both FHIR R4 and R5 version detection.
+When R5 version is detected, the system automatically falls back to this R4
+implementation, ensuring seamless backward compatibility.
+
+The Task resource represents a task to be performed, typically used for
+workflow management and task tracking in healthcare systems.
 """
 
 from dataclasses import dataclass, field
@@ -163,9 +169,37 @@ class TaskRestriction:
 @dataclass
 class Task(FHIRResource):
     """
-    FHIR R4 Task resource.
+    FHIR Task resource (R4/R5 compatible).
 
-    Represents a task to be performed.
+    Represents a task to be performed, typically used for workflow management
+    and task tracking in healthcare systems.
+
+    This implementation is based on FHIR R4 specification and is fully
+    compatible with both R4 and R5 version detection. When R5 version is
+    detected, the system automatically uses this R4 implementation via the
+    version-aware resource registry fallback mechanism.
+
+    Attributes:
+        resourceType: Always "Task" for this resource type
+        identifier: Business identifiers for this task
+        status: The current status of the task (required)
+        intent: Indicates the "level" of actionability associated with the task (required)
+        priority: The priority of the task
+        code: A name or code (or both) briefly describing what the task involves
+        description: A human-readable explanation of the task
+        focus: The request being actioned
+        for_: The entity who benefits from the performance of the service
+        encounter: Healthcare event during which this task is performed
+        executionPeriod: Identifies the time period during which the task is expected
+            to be performed
+        authoredOn: The date and time this task was created
+        lastModified: The date and time of last modification to this task
+        requester: The creator of the task
+        owner: The owner of the task
+        location: Principal physical location where the task is performed
+        input: Additional information that may be needed in the execution of the task
+        output: Outputs produced by the Task
+        restriction: Constraints on fulfillment tasks
     """
 
     resourceType: str = "Task"
@@ -182,13 +216,19 @@ class Task(FHIRResource):
     # Part of
     partOf: List[Reference] = field(default_factory=list)
     # Status
-    status: str  # draft | requested | received | accepted | rejected | ready | cancelled | in-progress | on-hold | failed | completed | entered-in-error (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (DomainResource has modifierExtension with default).
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # draft | requested | received | accepted | rejected | ready | cancelled | in-progress | on-hold | failed | completed | entered-in-error (required in FHIR)
     # Status reason
     statusReason: Optional[CodeableConcept] = None
     # Business status
     businessStatus: Optional[CodeableConcept] = None
     # Intent
-    intent: str  # unknown | proposal | plan | order | original-order | reflex-order | filler-order | instance-order | option (required)
+    # Note: intent is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility.
+    # Validation should enforce intent is provided.
+    intent: Optional[str] = None  # unknown | proposal | plan | order | original-order | reflex-order | filler-order | instance-order | option (required in FHIR)
     # Priority
     priority: Optional[str] = None  # routine | urgent | asap | stat
     # Code
@@ -231,11 +271,3 @@ class Task(FHIRResource):
     input: List[TaskInput] = field(default_factory=list)
     # Output
     output: List[TaskOutput] = field(default_factory=list)
-
-# Log completion timestamp at end of operations
-from datetime import datetime
-import logging
-
-logger = logging.getLogger(__name__)
-current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-logger.info(f"Current Time at End of Operations: {current_time}")

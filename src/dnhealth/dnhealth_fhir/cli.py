@@ -5,9 +5,10 @@
 # See the LICENSE files in the project root for details.
 
 """
-FHIR R4 command-line tool.
+FHIR R4 and R5 command-line tool.
 
 Provides commands for pretty-printing, validation, and format conversion.
+Supports both FHIR R4 and R5 resources with automatic version detection.
 """
 
 import argparse
@@ -23,6 +24,7 @@ from dnhealth.dnhealth_fhir.parser_xml import parse_fhir_xml
 from dnhealth.dnhealth_fhir.serializer_json import serialize_fhir_json
 from dnhealth.dnhealth_fhir.serializer_xml import serialize_fhir_xml
 from dnhealth.dnhealth_fhir.validation import validate_and_raise
+from dnhealth.dnhealth_fhir.version import normalize_version, FHIRVersion
 from dnhealth.dnhealth_fhir.search import parse_search_string, SearchParameters
 from dnhealth.dnhealth_fhir.resources.bundle import Bundle
 from dnhealth.dnhealth_fhir.resources.base import FHIRResource
@@ -33,6 +35,9 @@ from dnhealth.dnhealth_fhir.diff import compare_resources, format_diff
 from dnhealth.dnhealth_fhir.merge import merge_resources, merge_resources_into_bundle
 from dnhealth.dnhealth_fhir.transform import transform_resource, apply_field_mapping
 from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def cmd_pretty(args):
@@ -46,11 +51,16 @@ def cmd_pretty(args):
             else:
                 text = read_xml_file(args.input)
 
+        # Determine FHIR version if specified
+        fhir_version = None
+        if hasattr(args, 'fhir_version') and args.fhir_version:
+            fhir_version = normalize_version(args.fhir_version)
+        
         # Try JSON first, then XML
         try:
-            resource = parse_fhir_json(text)
+            resource = parse_fhir_json(text, fhir_version=fhir_version)
         except FHIRParseError:
-            resource = parse_fhir_xml(text)
+            resource = parse_fhir_xml(text, fhir_version=fhir_version)
 
         # Pretty-print as JSON
         json_str = serialize_fhir_json(resource, indent=2)
@@ -66,15 +76,6 @@ def cmd_pretty(args):
         print(f"Unexpected error: {e}", file=sys.stderr)
         sys.exit(1)
 
-
-
-    # Log completion timestamp at end of operation
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logger.info(f"Current Time at End of Operations: {current_time}")
-# Log completion timestamp
-current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-logger.info(f"Current Time at End of Operations: {current_time}")
-
 def cmd_validate(args):
     """Validation command."""
     try:
@@ -86,11 +87,16 @@ def cmd_validate(args):
             else:
                 text = read_xml_file(args.input)
 
+        # Determine FHIR version if specified
+        fhir_version = None
+        if hasattr(args, 'fhir_version') and args.fhir_version:
+            fhir_version = normalize_version(args.fhir_version)
+        
         # Parse
         try:
-            resource = parse_fhir_json(text)
+            resource = parse_fhir_json(text, fhir_version=fhir_version)
         except FHIRParseError:
-            resource = parse_fhir_xml(text)
+            resource = parse_fhir_xml(text, fhir_version=fhir_version)
 
         # Validate
         validate_and_raise(resource)
@@ -111,10 +117,6 @@ def cmd_validate(args):
         sys.exit(1)
 
 
-    # Log completion timestamp at end of operation
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logger.info(f"Current Time at End of Operations: {current_time}")
-
 def cmd_to_xml(args):
     """Convert JSON to XML command."""
     try:
@@ -123,8 +125,13 @@ def cmd_to_xml(args):
         else:
             text = read_json_file(args.input)
 
-        resource = parse_fhir_json(text)
-        xml_str = serialize_fhir_xml(resource)
+        # Determine FHIR version if specified
+        fhir_version = None
+        if hasattr(args, 'fhir_version') and args.fhir_version:
+            fhir_version = normalize_version(args.fhir_version)
+        
+        resource = parse_fhir_json(text, fhir_version=fhir_version)
+        xml_str = serialize_fhir_xml(resource, fhir_version=fhir_version)
 
         if args.output:
             Path(args.output).write_text(xml_str, encoding="utf-8")
@@ -135,9 +142,6 @@ def cmd_to_xml(args):
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
 
-        # Log completion timestamp
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
     except Exception as e:
         print(f"Unexpected error: {e}", file=sys.stderr)
         sys.exit(1)
@@ -151,8 +155,13 @@ def cmd_to_json(args):
         else:
             text = read_xml_file(args.input)
 
-        resource = parse_fhir_xml(text)
-        json_str = serialize_fhir_json(resource, indent=args.indent)
+        # Determine FHIR version if specified
+        fhir_version = None
+        if hasattr(args, 'fhir_version') and args.fhir_version:
+            fhir_version = normalize_version(args.fhir_version)
+        
+        resource = parse_fhir_xml(text, fhir_version=fhir_version)
+        json_str = serialize_fhir_json(resource, indent=args.indent, fhir_version=fhir_version)
 
         if args.output:
             Path(args.output).write_text(json_str, encoding="utf-8")
@@ -166,10 +175,6 @@ def cmd_to_json(args):
         print(f"Unexpected error: {e}", file=sys.stderr)
         sys.exit(1)
 
-
-    # Log completion timestamp at end of operation
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logger.info(f"Current Time at End of Operations: {current_time}")
 
 def _matches_search(resource: FHIRResource, search_params: SearchParameters) -> bool:
     """
@@ -185,10 +190,6 @@ def _matches_search(resource: FHIRResource, search_params: SearchParameters) -> 
         True if resource matches, False otherwise
     """
     from dnhealth.dnhealth_fhir.search_execution import resource_matches_search
-
-    # Log completion timestamp
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logger.info(f"Current Time at End of Operations: {current_time}")
     return resource_matches_search(resource, search_params)
 
 
@@ -275,10 +276,6 @@ def cmd_search(args):
         sys.exit(1)
 
 
-    # Log completion timestamp at end of operation
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logger.info(f"Current Time at End of Operations: {current_time}")
-
 def cmd_profile(args):
     """Profile validation command."""
     try:
@@ -342,10 +339,6 @@ def cmd_profile(args):
             print(f"Profile: {profile.url or profile.name or 'Unknown'}", file=sys.stderr)
             
             if args.output:
-
-        # Log completion timestamp
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
                 # Write success message to file
                 Path(args.output).write_text("Profile validation PASSED\n", encoding="utf-8")
 
@@ -414,10 +407,6 @@ def cmd_diff(args):
         sys.exit(1)
 
 
-    # Log completion timestamp at end of operation
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logger.info(f"Current Time at End of Operations: {current_time}")
-
 def _extract_value(value: Any) -> Any:
     """
     Extract and serialize a value for output.
@@ -444,10 +433,6 @@ def _extract_value(value: Any) -> Any:
         return [_extract_value(item) for item in value]
     
     # Primitive value
-
-    # Log completion timestamp
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logger.info(f"Current Time at End of Operations: {current_time}")
     return value
 
 
@@ -515,14 +500,10 @@ def cmd_extract(args):
         sys.exit(1)
 
 
-    # Log completion timestamp at end of operation
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logger.info(f"Current Time at End of Operations: {current_time}")
-
 def main():
     """Main CLI entry point."""
     parser = argparse.ArgumentParser(
-        description="FHIR R4 resource tool",
+        description="FHIR R4 and R5 resource tool (supports automatic version detection)",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
@@ -532,21 +513,25 @@ def main():
     pretty_parser = subparsers.add_parser("pretty", help="Pretty-print FHIR resource")
     pretty_parser.add_argument("input", nargs="?", help="Input file (use '-' or omit for stdin)")
     pretty_parser.add_argument("-o", "--output", help="Output file (default: stdout)")
+    pretty_parser.add_argument("--fhir-version", choices=["R4", "R5", "4.0", "5.0"], help="Explicitly specify FHIR version (default: auto-detect)")
 
     # Validate command
     validate_parser = subparsers.add_parser("validate", help="Validate FHIR resource")
     validate_parser.add_argument("input", nargs="?", help="Input file (use '-' or omit for stdin)")
+    validate_parser.add_argument("--fhir-version", choices=["R4", "R5", "4.0", "5.0"], help="Explicitly specify FHIR version (default: auto-detect)")
 
     # To-XML command
     to_xml_parser = subparsers.add_parser("to-xml", help="Convert JSON to XML")
     to_xml_parser.add_argument("input", nargs="?", help="Input JSON file (use '-' or omit for stdin)")
     to_xml_parser.add_argument("-o", "--output", help="Output XML file (default: stdout)")
+    to_xml_parser.add_argument("--fhir-version", choices=["R4", "R5", "4.0", "5.0"], help="Explicitly specify FHIR version (default: auto-detect)")
 
     # To-JSON command
     to_json_parser = subparsers.add_parser("to-json", help="Convert XML to JSON")
     to_json_parser.add_argument("input", nargs="?", help="Input XML file (use '-' or omit for stdin)")
     to_json_parser.add_argument("-o", "--output", help="Output JSON file (default: stdout)")
     to_json_parser.add_argument("--indent", type=int, default=2, help="JSON indentation (default: 2)")
+    to_json_parser.add_argument("--fhir-version", choices=["R4", "R5", "4.0", "5.0"], help="Explicitly specify FHIR version (default: auto-detect)")
 
     # Search command
     search_parser = subparsers.add_parser("search", help="Search resources")
@@ -636,10 +621,6 @@ def main():
         cmd_validate(args)
     elif args.command == "to-xml":
         cmd_to_xml(args)
-
-            # Log completion timestamp
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
     elif args.command == "to-json":
         cmd_to_json(args)
     elif args.command == "search":
@@ -662,10 +643,6 @@ def main():
 
 
 if __name__ == "__main__":
-    from datetime import datetime
-import logging
-
-logger = logging.getLogger(__name__)
     start_time = datetime.now()
     try:
         main()

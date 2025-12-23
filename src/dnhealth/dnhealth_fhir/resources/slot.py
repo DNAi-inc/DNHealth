@@ -43,13 +43,22 @@ class Slot(FHIRResource):
     # Appointment type
     appointmentType: Optional[CodeableConcept] = None
     # Schedule
-    schedule: Reference  # The schedule resource that this slot defines an interval of status information for (required)
+    # Note: schedule is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce schedule is provided.
+    schedule: Optional[Reference] = None  # The schedule resource that this slot defines an interval of status information for (required) (required in FHIR)
     # Status
-    status: str  # busy | free | busy-unavailable | busy-tentative | entered-in-error (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (identifier has default value).
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # busy | free | busy-unavailable | busy-tentative | entered-in-error (required in FHIR)
     # Start
-    start: str  # Date/Time that the slot is to begin (required) - ISO 8601 dateTime
+    # Note: start is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce start is provided.
+    start: Optional[str] = None  # Date/Time that the slot is to begin (required) - ISO 8601 dateTime
     # End
-    end: str  # Date/Time that the slot is to conclude (required) - ISO 8601 dateTime
+    # Note: end is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce end is provided.
+    end: Optional[str] = None  # Date/Time that the slot is to conclude (required) - ISO 8601 dateTime
     # Overbooked
     overbooked: Optional[bool] = None
     # Comment

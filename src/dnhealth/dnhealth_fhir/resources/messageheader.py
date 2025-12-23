@@ -49,7 +49,9 @@ class MessageHeaderDestination:
 
     name: Optional[str] = None
     target: Optional[Reference] = None
-    endpoint: str  # Actual destination address or id (required)
+    # Note: endpoint is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce endpoint is provided.
+    endpoint: Optional[str] = None  # Actual destination address or id (required)
     receiver: Optional[Reference] = None
     extension: List[Extension] = field(default_factory=list)
 
@@ -62,8 +64,12 @@ class MessageHeaderResponse:
     Information about the message that this message is a response to.
     """
 
-    identifier: str  # Id of original message (required)
-    code: str  # ok | transient-error | fatal-error (required)
+    # Note: identifier is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce identifier is provided.
+    identifier: Optional[str] = None  # Id of original message (required)
+    # Note: code is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce code is provided.
+    code: Optional[str] = None  # ok | transient-error | fatal-error (required)
     details: Optional[Reference] = None
     extension: List[Extension] = field(default_factory=list)
 
@@ -93,7 +99,9 @@ class MessageHeader(FHIRResource):
     # Author
     author: Optional[Reference] = None
     # Source
-    source: MessageHeaderSource  # Message source application (required)
+    # Note: source is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce source is provided.
+    source: Optional[MessageHeaderSource] = None  # Message source application (required)
     # Responsible
     responsible: Optional[Reference] = None
     # Reason

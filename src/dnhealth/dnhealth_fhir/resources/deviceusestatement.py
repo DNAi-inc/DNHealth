@@ -37,9 +37,13 @@ class DeviceUseStatement(DomainResource):
     # Based On
     basedOn: List[Reference] = field(default_factory=list)  # Fulfills plan, proposal or order
     # Status
-    status: str  # active | completed | entered-in-error | intended | stopped | on-hold (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # active | completed | entered-in-error | intended | stopped | on-hold (required in FHIR)
     # Subject
-    subject: Reference  # Patient using device (required)
+    # Note: subject is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce subject is provided.
+    subject: Optional[Reference] = None  # Patient using device (required)
     # Derived From
     derivedFrom: List[Reference] = field(default_factory=list)  # Supporting information
     # Timing Timing
@@ -53,7 +57,9 @@ class DeviceUseStatement(DomainResource):
     # Source
     source: Optional[Reference] = None  # Who made the statement
     # Device
-    device: Reference  # Reference to device used (required)
+    # Note: device is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce device is provided.
+    device: Optional[Reference] = None  # Reference to device used (required)
     # Reason Code
     reasonCode: List[CodeableConcept] = field(default_factory=list)  # Why device was used
     # Reason Reference

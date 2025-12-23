@@ -41,8 +41,12 @@ class TestScriptOrigin:
     id: Optional[str] = None
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
-    index: int  # The index of the abstract origin server (required)
-    profile: Any  # FHIR-Client | FHIR-SDC-FormFiller | FHIR-SDC-FormManager | FHIR-SDC-FormReceiver | FHIR-Server (Coding, required)
+    # Note: index is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce index is provided.
+    index: Optional[int] = None  # The index of the abstract origin server (required)
+    # Note: profile is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce profile is provided.
+    profile: Optional[Any] = None  # FHIR-Client | FHIR-SDC-FormFiller | FHIR-SDC-FormManager | FHIR-SDC-FormReceiver | FHIR-Server (Coding, required)
 
 
 @dataclass
@@ -56,8 +60,12 @@ class TestScriptDestination:
     id: Optional[str] = None
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
-    index: int  # The index of the abstract destination server (required)
-    profile: Any  # FHIR-Client | FHIR-SDC-FormFiller | FHIR-SDC-FormManager | FHIR-SDC-FormReceiver | FHIR-Server (Coding, required)
+    # Note: index is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce index is provided.
+    index: Optional[int] = None  # The index of the abstract destination server (required)
+    # Note: profile is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce profile is provided.
+    profile: Optional[Any] = None  # FHIR-Client | FHIR-SDC-FormFiller | FHIR-SDC-FormManager | FHIR-SDC-FormReceiver | FHIR-Server (Coding, required)
 
 
 @dataclass
@@ -86,8 +94,12 @@ class TestScriptFixture:
     id: Optional[str] = None
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
-    autocreate: bool  # Whether or not to implicitly create the fixture during setup (required)
-    autodelete: bool  # Whether or not to implicitly delete the fixture during teardown (required)
+    # Note: autocreate is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce autocreate is provided.
+    autocreate: Optional[bool] = None  # Whether or not to implicitly create the fixture during setup (required)
+    # Note: autodelete is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce autodelete is provided.
+    autodelete: Optional[bool] = None  # Whether or not to implicitly delete the fixture during teardown (required)
     resource: Optional[Reference] = None  # Reference to the resource
 
 
@@ -167,17 +179,23 @@ class TestScript(MetadataResource):
     
     resourceType: str = "TestScript"
     # URL
-    url: str  # Canonical URL (inherited from CanonicalResource, required)
+    # Note: url is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce url is provided.
+    url: Optional[str] = None  # Canonical URL (inherited from CanonicalResource, required)
     # Identifier
     identifier: Optional[Identifier] = None  # Additional identifier (inherited from CanonicalResource)
     # Version
     version: Optional[str] = None  # Business version (inherited from CanonicalResource)
     # Name
-    name: str  # Name for this test script (inherited from CanonicalResource, required)
+    # Note: name is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce name is provided.
+    name: Optional[str] = None  # Name for this test script (inherited from CanonicalResource, required)
     # Title
     title: Optional[str] = None  # Title for this test script (inherited from CanonicalResource)
     # Status
-    status: str  # draft | active | retired | unknown (inherited from CanonicalResource, required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # draft | active | retired | unknown (inherited from CanonicalResource, required)
     # Experimental
     experimental: Optional[bool] = None  # For testing purposes (inherited from CanonicalResource)
     # Date

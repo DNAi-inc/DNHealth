@@ -5,7 +5,7 @@
 # See the LICENSE files in the project root for details.
 
 """
-FHIR R4 Standard Operations.
+FHIR Standard Operations (version-aware).
 
 Provides support for FHIR standard operations including:
 - $validate - Resource validation
@@ -19,6 +19,8 @@ Provides support for FHIR standard operations including:
 - $process-message - Message processing
 - $stats - Resource statistics
 - $meta operations - Meta management
+
+Supports both R4 and R5 versions with version-aware operation handling.
 """
 
 from typing import Dict, List, Optional, Any, Type
@@ -42,6 +44,11 @@ from dnhealth.dnhealth_fhir.conceptmap_resource import ConceptMap, ConceptMapGro
 from dnhealth.dnhealth_fhir.types import Coding, CodeableConcept
 from dnhealth.dnhealth_fhir.document_generation import DocumentGenerator
 from dnhealth.dnhealth_fhir.messaging import MessageProcessor
+from dnhealth.dnhealth_fhir.version import (
+    FHIRVersion,
+    normalize_version,
+    DEFAULT_VERSION,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -79,7 +86,6 @@ class FHIROperation(ABC):
         self._storage = storage
         self._terminology_service = terminology_service
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     
@@ -127,7 +133,6 @@ class FHIROperation(ABC):
         if self.resource_type:
             op_def.resource = [self.resource_type]
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         return op_def
@@ -169,7 +174,6 @@ def get_operation(name: str, resource_type: Optional[str] = None) -> Optional[FH
         Operation instance or None if not found
     """
     if name not in _operation_registry:
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         return None
@@ -178,7 +182,6 @@ def get_operation(name: str, resource_type: Optional[str] = None) -> Optional[FH
     if resource_type and resource_type in _operation_registry[name]:
         operation_class = _operation_registry[name][resource_type]
         operation = operation_class()
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         return operation
@@ -187,7 +190,6 @@ def get_operation(name: str, resource_type: Optional[str] = None) -> Optional[FH
     if None in _operation_registry[name]:
         operation_class = _operation_registry[name][None]
         operation = operation_class()
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         return operation
@@ -1919,7 +1921,6 @@ class DocumentOperation(FHIROperation):
             self.logger.info(f"[{end_time.strftime('%Y-%m-%d %H:%M:%S')}] $document operation completed successfully in {elapsed:.2f} seconds")
             
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             self.logger.info(f"Current Time at End of Operations: {current_time}")
             
             return Parameters(parameter=result_params)
@@ -2935,7 +2936,6 @@ class ExportOperation(FHIROperation):
         format_param.valueString = output_format
         result.parameter.append(format_param)
         
-        # Log completion timestamp
         end_time = datetime.now()
         elapsed = (end_time - start_time).total_seconds()
         completion_time = end_time.strftime("%Y-%m-%d %H:%M:%S")
@@ -3059,7 +3059,6 @@ class PopulatelinkOperation(FHIROperation):
         result = Parameters()
         result.parameter = []
         
-        # Log completion timestamp
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         
@@ -3103,7 +3102,6 @@ class CareGapsOperation(FHIROperation):
         # gap_param.valueString = "No gaps found"  # Placeholder
         result.parameter.append(gap_param)
         
-        # Log completion timestamp
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         
@@ -3138,7 +3136,6 @@ class FindOperation(FHIROperation):
         result = Parameters()
         result.parameter = []
         
-        # Log completion timestamp
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         
@@ -3176,7 +3173,6 @@ class PopulateOperation(FHIROperation):
         result = Parameters()
         result.parameter = []
         
-        # Log completion timestamp
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         
@@ -3214,7 +3210,6 @@ class PopulatehtmlOperation(FHIROperation):
         result = Parameters()
         result.parameter = []
         
-        # Log completion timestamp
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         
@@ -3249,7 +3244,6 @@ class SubmitDataOperation(FHIROperation):
         result = Parameters()
         result.parameter = []
         
-        # Log completion timestamp
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         
@@ -3284,7 +3278,6 @@ class CollectDataOperation(FHIROperation):
         result = Parameters()
         result.parameter = []
         
-        # Log completion timestamp
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         
@@ -3319,7 +3312,6 @@ class QuestionnaireOperation(FHIROperation):
         result = Parameters()
         result.parameter = []
         
-        # Log completion timestamp
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         
@@ -3369,7 +3361,6 @@ class FindMatchesOperation(FHIROperation):
             # match_param.valueResource = matched_resource  # Would contain matched resource
             result.parameter.append(match_param)
         
-        # Log completion timestamp
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         
@@ -3435,7 +3426,6 @@ class MemberOfOperation(FHIROperation):
         result_param.valueBoolean = is_member
         result.parameter.append(result_param)
         
-        # Log completion timestamp
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         
@@ -3497,7 +3487,6 @@ class EvaluateMeasureOperation(FHIROperation):
         # In a real implementation, this would be a MeasureReport resource
         result.parameter.append(report_param)
         
-        # Log completion timestamp
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         logger.info(f"Evaluate-measure operation executed for measure: {measure_ref}")
@@ -4292,7 +4281,6 @@ class ConvertOperation(FHIROperation):
                 error_param.resource = error_outcome
                 result.parameter.append(error_param)
         
-        # Log completion timestamp
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         
@@ -4423,7 +4411,6 @@ class MatchOperation(FHIROperation):
             
             result.parameter.append(match_param)
         
-        # Log completion timestamp
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         
@@ -4513,8 +4500,6 @@ class ComposeOperation(FHIROperation):
             result.parameter = [result_param]
             
             # Log completion timestamp
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
             
         except Exception as e:
             self.logger.error(f"Error executing $compose: {e}")
@@ -4538,7 +4523,6 @@ class ComposeOperation(FHIROperation):
             OperationDefinitionParameter(name="valueSet", type="ValueSet", min=1, max="*")
         ]
         
-        # Log completion timestamp
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         
@@ -4594,8 +4578,6 @@ class SubsetOperation(FHIROperation):
             result.parameter = [result_param]
             
             # Log completion timestamp
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
             
         except Exception as e:
             self.logger.error(f"Error executing $subset: {e}")
@@ -4620,7 +4602,6 @@ class SubsetOperation(FHIROperation):
             OperationDefinitionParameter(name="criteria", type="string", min=0, max=1)
         ]
         
-        # Log completion timestamp
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         
@@ -4660,8 +4641,6 @@ class TestOperation(FHIROperation):
             result.parameter = [result_param]
             
             # Log completion timestamp
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
             
         except Exception as e:
             self.logger.error(f"Error executing $test: {e}")
@@ -4682,7 +4661,6 @@ class TestOperation(FHIROperation):
         op_def = super().get_operation_definition()
         op_def.description = "Test system connectivity and functionality"
         
-        # Log completion timestamp
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         
@@ -4754,8 +4732,6 @@ class ValidateResourceOperation(FHIROperation):
             result.parameter = [result_param]
             
             # Log completion timestamp
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
             
         except Exception as e:
             self.logger.error(f"Error executing $validate-resource: {e}")
@@ -4780,7 +4756,6 @@ class ValidateResourceOperation(FHIROperation):
             OperationDefinitionParameter(name="profile", type="uri", min=0, max=1)
         ]
         
-        # Log completion timestamp
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         

@@ -50,17 +50,23 @@ class DeviceMetric(DomainResource):
     # Identifier
     identifier: List[Identifier] = field(default_factory=list)  # Instance identifier
     # Type
-    type: CodeableConcept  # Identity of metric, for example Heart Rate or PEEP Setting (required)
+    # Note: type is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce type is provided.
+    type: Optional[CodeableConcept] = None  # Identity of metric, for example Heart Rate or PEEP Setting (required)
     # Unit
     unit: Optional[CodeableConcept] = None  # Unit of Measure for the Metric
     # Device
-    device: Reference  # Describes the link to the Device (required)
+    # Note: device is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce device is provided.
+    device: Optional[Reference] = None  # Describes the link to the Device (required)
     # Operational Status
     operationalStatus: Optional[str] = None  # on | off | standby | entered-in-error
     # Color
     color: Optional[str] = None  # black | red | green | yellow | blue | magenta | cyan | white
     # Category
-    category: str  # measurement | setting | calculation | unspecified (required)
+    # Note: category is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce category is provided.
+    category: Optional[str] = None  # measurement | setting | calculation | unspecified (required)
     # Measurement Frequency
     measurementFrequency: Optional[Timing] = None  # Indicates how often the metric is taken or recorded
     # Calibration

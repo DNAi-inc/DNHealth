@@ -56,9 +56,13 @@ class MedicinalProductCountryLanguage:
     Country where the name applies.
     """
 
-    country: CodeableConcept  # Country code for where this name applies (required)
+    # Note: country is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce country is provided.
+    country: Optional[CodeableConcept] = None  # Country code for where this name applies (required)
     jurisdiction: Optional[CodeableConcept] = None
-    language: CodeableConcept  # Language code for this name (required)
+    # Note: language is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce language is provided.
+    language: Optional[CodeableConcept] = None  # Language code for this name (required)
     extension: List[Extension] = field(default_factory=list)
 
 
@@ -86,7 +90,9 @@ class MarketingStatus:
 
     country: Optional[CodeableConcept] = None
     jurisdiction: Optional[CodeableConcept] = None
-    status: CodeableConcept  # The date when the Medicinal Product is placed on the market (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce status is provided.
+    status: Optional[CodeableConcept] = None  # The date when the Medicinal Product is placed on the market (required)
     dateRange: Optional[Period] = None
     restoreDate: Optional[str] = None  # ISO 8601 dateTime
     extension: List[Extension] = field(default_factory=list)

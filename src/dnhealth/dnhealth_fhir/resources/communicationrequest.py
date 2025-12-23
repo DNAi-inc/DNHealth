@@ -47,8 +47,10 @@ class CommunicationRequest(DomainResource):
     """
     
     resourceType: str = "CommunicationRequest"
-    # Required fields (must come before optional fields in dataclasses)
-    status: str  # draft | active | on-hold | revoked | completed | entered-in-error | unknown (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (DomainResource has modifierExtension with default).
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # draft | active | on-hold | revoked | completed | entered-in-error | unknown (required in FHIR)
     # Optional fields (with defaults)
     identifier: List[Identifier] = field(default_factory=list)  # Unique identifier
     basedOn: List[Reference] = field(default_factory=list)  # Fulfills plan or proposal

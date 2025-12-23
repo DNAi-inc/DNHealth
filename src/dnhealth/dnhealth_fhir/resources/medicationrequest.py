@@ -88,11 +88,16 @@ class MedicationRequest(FHIRResource):
     # Identifiers
     identifier: List[Identifier] = field(default_factory=list)
     # Status
-    status: str  # active | on-hold | cancelled | completed | entered-in-error | stopped | draft | unknown
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (identifier has default value).
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # active | on-hold | cancelled | completed | entered-in-error | stopped | draft | unknown (required in FHIR)
     # Status reason
     statusReason: Optional[CodeableConcept] = None
     # Intent
-    intent: str  # proposal | plan | order | original-order | reflex-order | filler-order | instance-order | option
+    # Note: intent is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce intent is provided.
+    intent: Optional[str] = None  # proposal | plan | order | original-order | reflex-order | filler-order | instance-order | option
     # Category
     category: List[CodeableConcept] = field(default_factory=list)
     # Priority
@@ -108,7 +113,9 @@ class MedicationRequest(FHIRResource):
     # Medication reference
     medicationReference: Optional[Reference] = None
     # Subject
-    subject: Reference  # Who or group medication request is for (required)
+    # Note: subject is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce subject is provided.
+    subject: Optional[Reference] = None  # Who or group medication request is for (required)
     # Encounter
     encounter: Optional[Reference] = None
     # Supporting information

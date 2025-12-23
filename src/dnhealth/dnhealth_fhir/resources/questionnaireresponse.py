@@ -87,7 +87,9 @@ class QuestionnaireResponse(FHIRResource):
     # Questionnaire
     questionnaire: Optional[str] = None  # Canonical URL to Questionnaire
     # Status
-    status: str  # in-progress | completed | amended | entered-in-error | stopped (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # in-progress | completed | amended | entered-in-error | stopped (required)
     # Subject
     subject: Optional[Reference] = None
     # Encounter

@@ -15,7 +15,7 @@ Provides complete field definitions for HL7 v2.x segments including:
 - Version-specific differences
 """
 
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 from dataclasses import dataclass, field
 import logging
 from datetime import datetime

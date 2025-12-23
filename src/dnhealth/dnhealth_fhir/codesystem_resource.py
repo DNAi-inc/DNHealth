@@ -168,10 +168,6 @@ def parse_codesystem_json(json_data: Dict[str, Any]) -> CodeSystem:
     # Log completion timestamp at end of operation
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     logger.debug(f"[{current_time}] CodeSystem JSON parsing completed")
-
-        # Log completion timestamp at end of operation
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
     
     return result
 
@@ -192,7 +188,6 @@ def get_codes_from_codesystem(codesystem: CodeSystem) -> Set[str]:
     for concept in codesystem.concept:
         _extract_codes_from_concept(concept, codes)
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     
@@ -208,7 +203,6 @@ def _extract_codes_from_concept(concept: CodeSystemConcept, codes: Set[str]) -> 
     Recursively extract codes from a concept and its nested concepts.
     
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     Args:
@@ -224,10 +218,6 @@ def _extract_codes_from_concept(concept: CodeSystemConcept, codes: Set[str]) -> 
 
 
 def get_code_system_by_url(codesystems: List[CodeSystem], url: str) -> Optional[CodeSystem]:
-
-        # Log completion timestamp at end of operation
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
     """
     Get a CodeSystem by URL from a list of CodeSystems.
     

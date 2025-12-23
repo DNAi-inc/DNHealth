@@ -188,10 +188,6 @@ def convert_patient_to_prpa(
     current_time_end = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     logger.info(f"[{current_time_end}] Patient to PRPA conversion completed in {elapsed:.2f} seconds")
     
-
-        # Log completion timestamp at end of operation
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
     return message
 
 
@@ -567,10 +563,6 @@ def convert_medicationdispense_to_porx(
     
     # Create message
     message = Message(root=root)
-
-        # Log completion timestamp at end of operation
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
     
     elapsed = time() - start_time
     current_time_end = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -596,10 +588,6 @@ def _convert_fhir_date_to_hl7v3(date_str: str) -> str:
         return ""
     
     # Remove any whitespace
-
-        # Log completion timestamp at end of operation
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
     date_str = date_str.strip()
     
     # Remove '-' from date

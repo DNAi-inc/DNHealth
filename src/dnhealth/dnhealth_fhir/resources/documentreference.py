@@ -84,7 +84,9 @@ class DocumentReference(DomainResource):
     # Identifier
     identifier: List[Identifier] = field(default_factory=list)  # Other identifiers for the document
     # Status
-    status: str  # current | superseded | entered-in-error (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # current | superseded | entered-in-error (required in FHIR)
     # Doc Status
     docStatus: Optional[str] = None  # preliminary | final | amended | entered-in-error
     # Type

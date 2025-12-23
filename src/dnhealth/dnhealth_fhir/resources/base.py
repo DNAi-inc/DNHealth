@@ -17,10 +17,7 @@ FHIR resource hierarchy:
 from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Any, TYPE_CHECKING
 
-from dnhealth.dnhealth_fhir.types import Extension, Narrative
-
-if TYPE_CHECKING:
-    from dnhealth.dnhealth_fhir.types import Coding
+from dnhealth.dnhealth_fhir.types import Extension, Narrative, Coding
 import logging
 from datetime import datetime
 
@@ -39,8 +36,8 @@ class Meta:
     lastUpdated: Optional[str] = None
     source: Optional[str] = None
     profile: List[str] = field(default_factory=list)
-    security: List["Coding"] = field(default_factory=list)
-    tag: List["Coding"] = field(default_factory=list)
+    security: List[Coding] = field(default_factory=list)
+    tag: List[Coding] = field(default_factory=list)
     extension: List[Extension] = field(default_factory=list)
 
 
@@ -71,7 +68,6 @@ class Resource:
 
 
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
 @dataclass

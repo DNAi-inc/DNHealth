@@ -5,25 +5,23 @@
 # See the LICENSE files in the project root for details.
 
 """
-FHIR R4 JSON serializer.
+FHIR JSON serializer (version-aware).
 
 Serializes FHIR resource objects to JSON format.
+Supports both R4 and R5 versions.
 """
 
 import json
 import logging
 from datetime import datetime
-from typing import Any, Dict, get_type_hints, get_origin, get_args
+from typing import Any, Dict, Optional, get_type_hints, get_origin, get_args
 
-from dnhealth.dnhealth_fhir.resources.base import FHIRResource
+from dnhealth.dnhealth_fhir.resources.base import FHIRResource, Resource
+from dnhealth.dnhealth_fhir.version import FHIRVersion, get_version_string
 
 logger = logging.getLogger(__name__)
 
 
-
-    # Log completion timestamp at end of operation
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logger.info(f"Current Time at End of Operations: {current_time}")
 def _serialize_field(value: Any, field_type: Any) -> Any:
     """
     Serialize a field value to JSON-serializable format.
@@ -54,14 +52,24 @@ def _serialize_field(value: Any, field_type: Any) -> Any:
             return [_serialize_field(item, item_type) for item in value]
         return []
 
+    # Handle Resource and FHIRResource instances (including Binary, Parameters, etc.)
+    # These need special handling as they might be nested in fields
+    # Note: Binary extends Resource directly, not DomainResource/FHIRResource
+    if isinstance(value, (Resource, FHIRResource)):
+        return _serialize_dataclass(value)
+    
     # Handle dataclass types
     if hasattr(field_type, "__dataclass_fields__"):
+        # Check if value is actually a dataclass instance
+        if hasattr(value, "__dataclass_fields__"):
+            return _serialize_dataclass(value)
+        # If field_type is a dataclass but value is not, might be a dict or other type
+        # Try to serialize it as-is if it's already JSON-serializable
+        if isinstance(value, (dict, list, str, int, float, bool)) or value is None:
+            return value
+        # Otherwise, try to serialize as dataclass anyway (might work)
         return _serialize_dataclass(value)
 
-
-        # Log completion timestamp at end of operation
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
     # Handle primitive types
     return value
 
@@ -83,10 +91,6 @@ def _serialize_extension(ext: Any) -> Dict[str, Any]:
     
     # Ensure nested extensions are properly serialized
     if "extension" in result and isinstance(result["extension"], list):
-
-            # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
         result["extension"] = [
             _serialize_extension(nested_ext) if hasattr(nested_ext, "__dataclass_fields__") else nested_ext
             for nested_ext in result["extension"]
@@ -144,10 +148,6 @@ def _serialize_dataclass(obj: Any) -> Dict[str, Any]:
                     # No extensions, serialize normally
                     result[json_field_name] = serialized_value
             else:
-
-                    # Log completion timestamp at end of operation
-                    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    logger.info(f"Current Time at End of Operations: {current_time}")
                 # No primitive extensions, serialize normally
                 result[json_field_name] = serialized_value
         else:
@@ -160,20 +160,31 @@ def _serialize_dataclass(obj: Any) -> Dict[str, Any]:
     return result
 
 
-def serialize_fhir_json(resource: FHIRResource, indent: int = 2) -> str:
+def serialize_fhir_json(
+    resource: FHIRResource,
+    indent: int = 2,
+    fhir_version: Optional[str] = None,
+    include_version: bool = False,
+) -> str:
     """
     Serialize FHIR resource to JSON string.
+    
+    Version-aware serializer that supports both R4 and R5. Can optionally
+    include fhirVersion field in the output.
 
     Args:
         resource: FHIR resource object
         indent: JSON indentation level
+        fhir_version: Optional FHIR version to include in output ("4.0", "R4", "5.0", "R5", etc.)
+        include_version: If True, include fhirVersion field in output (default: False for backward compatibility)
 
     Returns:
         JSON string
     """
     start_time = datetime.now()
     current_time = start_time.strftime("%Y-%m-%d %H:%M:%S")
-    logger.debug(f"[{current_time}] Starting FHIR JSON serialization for resource type: {getattr(resource, 'resourceType', 'Unknown')}")
+    resource_type = getattr(resource, 'resourceType', 'Unknown')
+    logger.debug(f"[{current_time}] Starting FHIR JSON serialization for resource type: {resource_type}")
     
     data = _serialize_dataclass(resource)
     
@@ -182,7 +193,8 @@ def serialize_fhir_json(resource: FHIRResource, indent: int = 2) -> str:
     if hasattr(resource, "contained") and resource.contained:
         contained_data = []
         for contained_resource in resource.contained:
-            if isinstance(contained_resource, FHIRResource):
+            # Check for both Resource and FHIRResource (Binary extends Resource directly)
+            if isinstance(contained_resource, (Resource, FHIRResource)):
                 # Serialize each contained resource
                 contained_dict = _serialize_dataclass(contained_resource)
                 # Ensure resourceType is first in contained resource
@@ -206,6 +218,29 @@ def serialize_fhir_json(resource: FHIRResource, indent: int = 2) -> str:
         result = {"resourceType": resource_type}
         result.update(data)
         data = result
+    
+    # Optionally add fhirVersion field
+    if include_version and fhir_version:
+        from dnhealth.dnhealth_fhir.version import normalize_version, get_version_string
+        version = normalize_version(fhir_version)
+        data["fhirVersion"] = get_version_string(version)
+    
+    # Ensure all nested Resource and FHIRResource instances are properly serialized
+    # This handles cases where Binary, Parameters, or other resources are nested in fields
+    # Note: Binary extends Resource directly, not DomainResource/FHIRResource
+    def _ensure_serialized(obj: Any) -> Any:
+        """Recursively ensure all Resource and FHIRResource instances are serialized."""
+        if isinstance(obj, (Resource, FHIRResource)):
+            return _serialize_dataclass(obj)
+        elif isinstance(obj, dict):
+            return {k: _ensure_serialized(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [_ensure_serialized(item) for item in obj]
+        else:
+            return obj
+    
+    # Recursively serialize any nested FHIRResource instances
+    data = _ensure_serialized(data)
     
     json_result = json.dumps(data, indent=indent, ensure_ascii=False)
     

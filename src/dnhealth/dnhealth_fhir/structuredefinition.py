@@ -14,7 +14,10 @@ import logging
 from datetime import datetime
 from typing import Dict, List, Optional, Set, Any
 from dataclasses import dataclass, field
-from dnhealth.dnhealth_fhir.resources.base import FHIRResource
+
+# Import FHIRResource after ElementDefinition to avoid circular import
+# ElementDefinition is imported by types.py, which is imported by base.py
+# So we delay the import until after ElementDefinition is defined
 
 logger = logging.getLogger(__name__)
 
@@ -229,6 +232,9 @@ class ElementDefinition:
     mapping: List[Dict[str, Any]] = field(default_factory=list)
 
 
+# Import FHIRResource here to avoid circular import with types.py
+from dnhealth.dnhealth_fhir.resources.base import FHIRResource
+
 @dataclass
 class StructureDefinition(FHIRResource):
     """
@@ -380,7 +386,6 @@ def _parse_element_definition(elem_data: Dict[str, Any]) -> ElementDefinition:
     if "constraint" in elem_data:
         element.constraint = elem_data["constraint"] if isinstance(elem_data["constraint"], list) else [elem_data["constraint"]]
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     

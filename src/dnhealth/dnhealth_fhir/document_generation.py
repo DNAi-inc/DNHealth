@@ -5,10 +5,11 @@
 # See the LICENSE files in the project root for details.
 
 """
-FHIR R4 document generation workflow.
+FHIR document generation workflow (version-aware, supports R4 and R5).
 
 Provides functionality to generate FHIR document Bundles from resources,
 including Composition generation, related resource discovery, and document Bundle creation.
+Version-aware: supports both FHIR R4 and R5 document generation.
 """
 
 import logging
@@ -20,6 +21,11 @@ from dnhealth.dnhealth_fhir.resources.base import FHIRResource
 from dnhealth.dnhealth_fhir.resources.bundle import Bundle, BundleEntry
 from dnhealth.dnhealth_fhir.resources.composition import Composition, CompositionSection
 from dnhealth.dnhealth_fhir.types import CodeableConcept, Narrative, Reference
+from dnhealth.dnhealth_fhir.version import (
+    FHIRVersion,
+    normalize_version,
+    DEFAULT_VERSION
+)
 
 logger = logging.getLogger(__name__)
 
@@ -61,16 +67,22 @@ class DocumentGenerator:
         self,
         resource: FHIRResource,
         document_type: CodeableConcept,
-        persist: bool = False,        max_depth: int = 3,
+        persist: bool = False,
+        max_depth: int = 3,
+        fhir_version: Optional[str] = None
     ) -> Bundle:
         """
         Generate a document Bundle from a resource.
+        
+        Version-aware: supports both FHIR R4 and R5 document generation.
+        Defaults to R4 for backward compatibility.
         
         Args:
             resource: Source resource
             document_type: Type of document to generate
             persist: Whether to persist the document
             max_depth: Maximum depth for related resource discovery
+            fhir_version: Optional FHIR version (R4 or R5). If not provided, defaults to R4.
             
         Returns:
             Document Bundle (type="document")
@@ -80,6 +92,9 @@ class DocumentGenerator:
         logger.info(
             f"[{current_time}] Generating document for resource {resource.resourceType}"
         )
+        
+        # Normalize version (defaults to R4 for backward compatibility)
+        version = normalize_version(fhir_version)
         
         # Find related resources
         related_resources = self.find_related_resources(resource, max_depth=max_depth)
@@ -154,8 +169,6 @@ class DocumentGenerator:
         
 
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
         return related_resources
 
     def create_composition(
@@ -237,8 +250,6 @@ class DocumentGenerator:
         elapsed = time.time() - start_time
 
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
         logger.info(
             f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Composition creation "
             f"completed in {elapsed:.3f}s"
@@ -277,10 +288,6 @@ class DocumentGenerator:
         document_bundle = Bundle(
             resourceType="Bundle",
             type="document",
-
-                # Log completion timestamp at end of operation
-                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                logger.info(f"Current Time at End of Operations: {current_time}")
             entry=entries,
             timestamp=datetime.now().isoformat(),
         )
@@ -303,10 +310,6 @@ class DocumentGenerator:
                 if value.reference:
                     references.append(value.reference)
             elif isinstance(value, list):
-
-                    # Log completion timestamp at end of operation
-                    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    logger.info(f"Current Time at End of Operations: {current_time}")
                 for item in value:
                     extract_from_value(item)
             elif isinstance(value, dict):
@@ -336,10 +339,6 @@ class DocumentGenerator:
                 self._resource_cache[reference] = resource
             return resource
         
-
-         # Log completion timestamp at end of operation
-         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-         logger.info(f"Current Time at End of Operations: {current_time}")
         return None
 
     def _persist_document(self, document_bundle: Bundle) -> None:

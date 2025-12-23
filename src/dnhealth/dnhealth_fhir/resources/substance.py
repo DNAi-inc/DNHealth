@@ -64,7 +64,9 @@ class Substance(FHIRResource):
     # Category
     category: List[CodeableConcept] = field(default_factory=list)
     # Code
-    code: CodeableConcept  # What substance this is (required)
+    # Note: code is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce code is provided.
+    code: Optional[CodeableConcept] = None  # What substance this is (required)
     # Description
     description: Optional[str] = None
     # Instance

@@ -43,8 +43,12 @@ class MedicinalProductPackagedPackageItem:
     """
 
     identifier: List[Identifier] = field(default_factory=list)
-    type: CodeableConcept  # The physical type of the container of the medicine (required)
-    quantity: Quantity  # The quantity of this package in the medicinal product (required)
+    # Note: type is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce type is provided.
+    type: Optional[CodeableConcept] = None  # The physical type of the container of the medicine (required)
+    # Note: quantity is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce quantity is provided.
+    quantity: Optional[Quantity] = None  # The quantity of this package in the medicinal product (required)
     material: List[CodeableConcept] = field(default_factory=list)
     alternateMaterial: List[CodeableConcept] = field(default_factory=list)
     device: List[Reference] = field(default_factory=list)

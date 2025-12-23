@@ -43,7 +43,9 @@ class GuidanceResponse(DomainResource):
     # Module CodeableConcept
     moduleCodeableConcept: Optional[CodeableConcept] = None  # What guidance was requested
     # Status
-    status: str  # success | data-requested | data-required | in-progress | failure | entered-in-error (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # success | data-requested | data-required | in-progress | failure | entered-in-error (required in FHIR)
     # Subject
     subject: Optional[Reference] = None  # Patient the request was performed for
     # Encounter

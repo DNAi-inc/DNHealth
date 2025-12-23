@@ -72,7 +72,9 @@ class SupplyRequest(DomainResource):
     # Item Reference
     itemReference: Optional[Reference] = None  # The requested item
     # Quantity
-    quantity: Any  # The requested amount (Quantity, required)
+    # Note: quantity is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce quantity is provided.
+    quantity: Optional[Any] = None  # The requested amount (Quantity, required)
     # Parameter
     parameter: List[SupplyRequestParameter] = field(default_factory=list)  # Ordered item details
     # Occurrence DateTime

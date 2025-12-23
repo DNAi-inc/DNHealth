@@ -6,9 +6,10 @@
 
 import logging
 """
-FHIR R4 Profile conformance checking.
+FHIR Profile conformance checking (version-aware, supports R4 and R5).
 
 Validates that resources conform to StructureDefinition profiles.
+Version-aware: supports both FHIR R4 and R5 profiles.
 """
 
 from typing import Dict, List, Optional, Set, Any
@@ -40,6 +41,11 @@ from dnhealth.dnhealth_fhir.terminology_service import (
     BINDING_STRENGTH_PREFERRED,
     BINDING_STRENGTH_EXAMPLE,
 )
+from dnhealth.dnhealth_fhir.version import (
+    FHIRVersion,
+    normalize_version,
+    DEFAULT_VERSION
+)
 from dnhealth.util.logging import get_logger
 
 logger = logging.getLogger(__name__)
@@ -49,19 +55,27 @@ logger = get_logger(__name__)
 
 def check_profile_conformance(
     resource: FHIRResource,
-    profile: StructureDefinition,    strict: bool = False
+    profile: StructureDefinition,
+    strict: bool = False,
+    fhir_version: Optional[str] = None
 ) -> List[str]:
     """
     Check if a resource conforms to a StructureDefinition profile.
+    
+    Version-aware: supports both FHIR R4 and R5 profiles.
+    Defaults to R4 for backward compatibility.
     
     Args:
         resource: FHIR resource to validate
         profile: StructureDefinition profile to check against
         strict: If True, enforce all constraints strictly
+        fhir_version: Optional FHIR version (R4 or R5). If not provided, defaults to R4.
         
     Returns:
         List of conformance error messages (empty if conformant)
     """
+    # Normalize version (defaults to R4 for backward compatibility)
+    version = normalize_version(fhir_version)
     errors = []
     
     # Check resource type matches
@@ -265,7 +279,6 @@ def _has_fixed_value(element: ElementDefinition) -> bool:
         if hasattr(element, field) and getattr(element, field) is not None:
             return True
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     return False
@@ -287,17 +300,10 @@ def _get_fixed_value(element: ElementDefinition) -> Any:
         "fixedDate", "fixedDateTime", "fixedUri", "fixedCode"
     ]
 
-            # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
     for field in fixed_fields:
         if hasattr(element, field):
             value = getattr(element, field)
             if value is not None:
-
-            # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
                 return value
     return None
 
@@ -346,10 +352,6 @@ def get_profile_constraints(profile: StructureDefinition) -> Dict[str, Any]:
         if element.path:
             element_constraints = {}
             
-
-        # Log completion timestamp at end of operation
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
             if element.min is not None:
                 element_constraints["min"] = element.min
             if element.max:
@@ -389,10 +391,6 @@ def _validate_fhirpath_constraint(
     """
     try:
         # Evaluate constraint expression
-
-            # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
         result = evaluate_fhirpath_expression(constraint.expression, resource)
         
         # Result should be boolean or truthy/falsy
@@ -457,10 +455,6 @@ def _validate_binding_strength(
     elif isinstance(field_value, list):
         # Handle list of codes
         for item in field_value:
-
-            # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
             item_errors = _validate_binding_strength(
                 resource, field_path, item, binding_strength, value_set_url, terminology_service
             )

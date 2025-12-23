@@ -35,7 +35,9 @@ class AppointmentResponse(FHIRResource):
     # Identifiers
     identifier: List[Identifier] = field(default_factory=list)
     # Appointment
-    appointment: Reference  # Appointment that this response is replying to (required)
+    # Note: appointment is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce appointment is provided.
+    appointment: Optional[Reference] = None  # Appointment that this response is replying to (required)
     # Start
     start: Optional[str] = None  # ISO 8601 dateTime
     # End
@@ -45,7 +47,9 @@ class AppointmentResponse(FHIRResource):
     # Actor
     actor: Optional[Reference] = None
     # Participant status
-    participantStatus: str  # accepted | declined | tentative | needs-action | entered-in-error
+    # Note: participantStatus is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce participantStatus is provided.
+    participantStatus: Optional[str] = None  # accepted | declined | tentative | needs-action | entered-in-error
     # Comment
     comment: Optional[str] = None
 

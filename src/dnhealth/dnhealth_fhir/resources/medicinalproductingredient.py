@@ -30,8 +30,12 @@ class MedicinalProductIngredientSpecifiedSubstance:
     A specified substance that comprises this ingredient.
     """
 
-    code: CodeableConcept  # The specified substance (required)
-    group: CodeableConcept  # The group of specified substance (required)
+    # Note: code is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce code is provided.
+    code: Optional[CodeableConcept] = None  # The specified substance (required)
+    # Note: group is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce group is provided.
+    group: Optional[CodeableConcept] = None  # The group of specified substance (required)
     confidentiality: Optional[CodeableConcept] = None
     strength: List["MedicinalProductIngredientSpecifiedSubstanceStrength"] = field(default_factory=list)
     extension: List[Extension] = field(default_factory=list)
@@ -43,7 +47,9 @@ class MedicinalProductIngredientSpecifiedSubstanceStrength:
     Quantity of the substance or specified substance present in the ingredient.
     """
 
-    presentation: Ratio  # The quantity of substance in the unit of presentation (required)
+    # Note: presentation is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce presentation is provided.
+    presentation: Optional[Ratio] = None  # The quantity of substance in the unit of presentation (required)
     presentationLowLimit: Optional[Ratio] = None
     concentration: Optional[Ratio] = None
     concentrationLowLimit: Optional[Ratio] = None
@@ -60,7 +66,9 @@ class MedicinalProductIngredientSpecifiedSubstanceStrengthReferenceStrength:
     """
 
     substance: Optional[CodeableConcept] = None
-    strength: Ratio  # Strength of the reference substance (required)
+    # Note: strength is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce strength is provided.
+    strength: Optional[Ratio] = None  # Strength of the reference substance (required)
     strengthLowLimit: Optional[Ratio] = None
     measurementPoint: Optional[str] = None
     country: List[CodeableConcept] = field(default_factory=list)
@@ -73,7 +81,9 @@ class MedicinalProductIngredientSubstance:
     The ingredient substance.
     """
 
-    code: CodeableConcept  # The ingredient substance (required)
+    # Note: code is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce code is provided.
+    code: Optional[CodeableConcept] = None  # The ingredient substance (required)
     strength: List[MedicinalProductIngredientSpecifiedSubstanceStrength] = field(default_factory=list)
     extension: List[Extension] = field(default_factory=list)
 
@@ -90,7 +100,9 @@ class MedicinalProductIngredient(FHIRResource):
     # Identifiers
     identifier: Optional[Identifier] = None
     # Role
-    role: CodeableConcept  # Ingredient role (required)
+    # Note: role is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce role is provided.
+    role: Optional[CodeableConcept] = None  # Ingredient role (required)
     # Allergenic Indicator
     allergenicIndicator: Optional[bool] = None
     # Manufacturer

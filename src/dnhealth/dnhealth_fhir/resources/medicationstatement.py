@@ -40,7 +40,9 @@ class MedicationStatement(FHIRResource):
     # Part of
     partOf: List[Reference] = field(default_factory=list)
     # Status
-    status: str  # active | completed | entered-in-error | intended | stopped | on-hold | unknown | not-taken
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # active | completed | entered-in-error | intended | stopped | on-hold | unknown | not-taken (required in FHIR)
     # Status reason
     statusReason: List[CodeableConcept] = field(default_factory=list)
     # Category
@@ -50,7 +52,9 @@ class MedicationStatement(FHIRResource):
     # Medication reference
     medicationReference: Optional[Reference] = None
     # Subject
-    subject: Reference  # Who is/was taking the medication (required)
+    # Note: subject is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce subject is provided.
+    subject: Optional[Reference] = None  # Who is/was taking the medication (required)
     # Context
     context: Optional[Reference] = None
     # Effective dateTime

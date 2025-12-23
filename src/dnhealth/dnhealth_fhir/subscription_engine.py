@@ -277,7 +277,6 @@ class SubscriptionEngine:
                 subscriptions = [s for s in subscriptions if s.status == status]
             
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         return subscriptions
@@ -436,10 +435,8 @@ class SubscriptionEngine:
         # Send notification
         try:
             handler(notification)
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             logger.info(f"[{current_time}] Successfully sent notification for subscription {subscription.id}")
         except Exception as e:
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             logger.error(f"[{current_time}] Failed to send notification for subscription {subscription.id}: {e}")
             self._mark_subscription_error(subscription, str(e))
     
@@ -551,14 +548,12 @@ class SubscriptionEngine:
                 raise
         except ImportError:
             # websocket-client not available, log for manual processing
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             logger.info(
                 f"[{current_time}] WebSocket notification prepared for {endpoint}. "
                 f"Install 'websocket-client' package for automatic sending. "
                 f"Bundle data: {len(str(bundle_data))} bytes"
             )
         except Exception as e:
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             logger.error(f"[{current_time}] Failed to send WebSocket notification to {endpoint}: {e}")
             raise
     
@@ -638,15 +633,12 @@ Bundle data is attached as JSON.
             if elapsed > TEST_TIMEOUT:
                 raise TimeoutError(f"Email notification exceeded timeout: {elapsed:.3f}s")
             
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             logger.info(f"[{current_time}] Email notification sent to {endpoint} in {elapsed:.3f}s")
         except ImportError:
             # smtplib should always be available in Python stdlib
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             logger.warning(f"[{current_time}] Email notification prepared for {endpoint} but SMTP module unavailable")
         except Exception as e:
             # If SMTP fails, log for manual processing
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             logger.warning(
                 f"[{current_time}] Email notification prepared for {endpoint} but SMTP send failed: {e}. "
                 f"Configure SMTP via environment variables (FHIR_SMTP_HOST, FHIR_SMTP_PORT, etc.) "
@@ -726,7 +718,6 @@ Bundle data is attached as JSON.
                     f"environment variables. Message: {sms_text}"
                 )
         except Exception as e:
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             logger.warning(
                 f"[{current_time}] SMS notification prepared for {endpoint} but gateway send failed: {e}. "
                 f"Message: {sms_text}"

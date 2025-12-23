@@ -323,7 +323,6 @@ class ClaimResponse(DomainResource):
         if self.outcome is None:
             raise ValueError("outcome is required")
         
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.debug(f"Current Time at End of Operations: {current_time}")
 

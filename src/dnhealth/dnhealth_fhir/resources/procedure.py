@@ -35,7 +35,9 @@ class ProcedurePerformer:
     """
 
     function: Optional[CodeableConcept] = None
-    actor: Reference  # The practitioner who performed the procedure (required)
+    # Note: actor is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce actor is provided.
+    actor: Optional[Reference] = None  # The practitioner who performed the procedure (required)
     onBehalfOf: Optional[Reference] = None
     extension: List[Extension] = field(default_factory=list)
 
@@ -51,7 +53,9 @@ class ProcedureFocalDevice:
     """
 
     action: Optional[CodeableConcept] = None
-    manipulated: Reference  # Device that was changed (required)
+    # Note: manipulated is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce manipulated is provided.
+    manipulated: Optional[Reference] = None  # Device that was changed (required)
     extension: List[Extension] = field(default_factory=list)
 
 
@@ -75,7 +79,9 @@ class Procedure(FHIRResource):
     # Part of
     partOf: List[Reference] = field(default_factory=list)
     # Status
-    status: str  # preparation | in-progress | not-done | on-hold | stopped | completed | entered-in-error | unknown
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # preparation | in-progress | not-done | on-hold | stopped | completed | entered-in-error | unknown (required in FHIR)
     # Status reason
     statusReason: Optional[CodeableConcept] = None
     # Category
@@ -83,7 +89,9 @@ class Procedure(FHIRResource):
     # Code
     code: Optional[CodeableConcept] = None
     # Subject
-    subject: Reference  # Who the procedure was performed on (required)
+    # Note: subject is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce subject is provided.
+    subject: Optional[Reference] = None  # Who the procedure was performed on (required)
     # Encounter
     encounter: Optional[Reference] = None
     # Performed dateTime

@@ -78,7 +78,9 @@ class DeviceVersion:
     
     type: Optional[CodeableConcept] = None  # The type of the device version
     component: Optional[Identifier] = None  # A single device version
-    value: str  # The version of the device or software (required)
+    # Note: value is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce value is provided.
+    value: Optional[str] = None  # The version of the device or software (required)
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
 

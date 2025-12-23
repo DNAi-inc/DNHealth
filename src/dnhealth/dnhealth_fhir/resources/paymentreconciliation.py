@@ -42,7 +42,9 @@ class PaymentReconciliationDetail:
     modifierExtension: List[Extension] = field(default_factory=list)
     identifier: Optional[Identifier] = None  # Business identifier of the payment detail
     predecessor: Optional[Identifier] = None  # Business identifier of the prior payment detail
-    type: CodeableConcept  # Type of payment (required)
+    # Note: type is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce type is provided.
+    type: Optional[CodeableConcept] = None  # Type of payment (required)
     request: Optional[Reference] = None  # Claim request
     submitter: Optional[Reference] = None  # Submitter of the request
     response: Optional[Reference] = None  # Claim response
@@ -80,11 +82,17 @@ class PaymentReconciliation(DomainResource):
     # Identifier
     identifier: List[Identifier] = field(default_factory=list)  # Business Identifier for the payment reconciliation
     # Status
-    status: str  # active | cancelled | draft | entered-in-error (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (identifier has default value).
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # active | cancelled | draft | entered-in-error (required in FHIR)
     # Period
     period: Optional[Period] = None  # Period covered
     # Created
-    created: str  # Creation date (required)
+    # Note: created is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (period has default value).
+    # Validation should enforce created is provided.
+    created: Optional[str] = None  # Creation date (required in FHIR)
     # Payment Issuer
     paymentIssuer: Optional[Reference] = None  # Party generating payment
     # Request
@@ -96,9 +104,13 @@ class PaymentReconciliation(DomainResource):
     # Disposition
     disposition: Optional[str] = None  # Disposition message
     # Payment Date
-    paymentDate: str  # When payment issued (required)
+    # Note: paymentDate is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce paymentDate is provided.
+    paymentDate: Optional[str] = None  # When payment issued (required)
     # Payment Amount
-    paymentAmount: Money  # Total amount of payment (required)
+    # Note: paymentAmount is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce paymentAmount is provided.
+    paymentAmount: Optional[Money] = None  # Total amount of payment (required)
     # Payment Identifier
     paymentIdentifier: Optional[Identifier] = None  # Business identifier for the payment
     # Detail

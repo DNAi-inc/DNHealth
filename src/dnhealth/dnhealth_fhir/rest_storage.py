@@ -46,7 +46,6 @@ class ResourceStorage:
     def _get_resource_key(self, resource_type: str, resource_id: str) -> str:
         """Get storage key for resource."""
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         return f"{resource_type}/{resource_id}"
@@ -132,7 +131,6 @@ class ResourceStorage:
                 "timestamp": now
             }
             
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             logger.info(f"[{current_time}] Created resource {resource_type}/{resource_id} version {version_id}")
             
             return resource
@@ -196,7 +194,6 @@ class ResourceStorage:
                 "timestamp": now
             }
             
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             logger.info(f"[{current_time}] Updated resource {resource_type}/{resource_id} to version {next_version}")
             
             return resource
@@ -229,7 +226,6 @@ class ResourceStorage:
             
             self._deleted[resource_type][resource_id] = datetime.now()
             
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             logger.info(f"[{current_time}] Deleted resource {resource_type}/{resource_id}")
             
             return True
@@ -255,8 +251,6 @@ class ResourceStorage:
             
 
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
             return resource_id in self._deleted[resource_type]
     
     def get_history(
@@ -508,8 +502,6 @@ class ResourceStorage:
                 if ref == f"{owner_type}/{owner_id}":
 
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
                     return True
         
         # Check context reference

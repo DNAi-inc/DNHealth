@@ -56,7 +56,9 @@ class MeasureGroupPopulation:
     modifierExtension: List[Extension] = field(default_factory=list)
     code: Optional[CodeableConcept] = None  # initial-population | numerator | numerator-exclusion | denominator | denominator-exclusion | denominator-exception | measure-population | measure-population-exclusion | measure-observation
     description: Optional[str] = None  # The human readable description of this population criteria
-    criteria: Any  # The criteria that defines this population (Expression)
+    # Note: criteria is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce criteria is provided.
+    criteria: Optional[Any] = None  # The criteria that defines this population (Expression)
 
 
 @dataclass
@@ -89,7 +91,9 @@ class MeasureGroupStratifierComponent:
     modifierExtension: List[Extension] = field(default_factory=list)
     code: Optional[CodeableConcept] = None  # Meaning of the stratifier component
     description: Optional[str] = None  # The human readable description of this stratifier component
-    criteria: Any  # Component criteria (Expression)
+    # Note: criteria is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce criteria is provided.
+    criteria: Optional[Any] = None  # Component criteria (Expression)
 
 
 @dataclass
@@ -106,7 +110,9 @@ class MeasureSupplementalData:
     code: Optional[CodeableConcept] = None  # Meaning of the supplemental data
     usage: List[CodeableConcept] = field(default_factory=list)  # supplemental-data | risk-adjustment-factor
     description: Optional[str] = None  # The human readable description of this supplemental data
-    criteria: Any  # Expression describing additional data to be reported (Expression)
+    # Note: criteria is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce criteria is provided.
+    criteria: Optional[Any] = None  # Expression describing additional data to be reported (Expression)
 
 
 @dataclass

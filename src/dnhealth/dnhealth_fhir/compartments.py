@@ -182,7 +182,6 @@ def parse_compartment_url(url: str) -> tuple[Optional[str], Optional[str], Optio
         return None, None, None
     
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     return compartment_name, compartment_id, resource_type

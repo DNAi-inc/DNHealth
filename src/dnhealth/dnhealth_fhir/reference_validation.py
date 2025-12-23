@@ -218,11 +218,6 @@ def validate_reference_exists(
     # Log completion timestamp at end of operation
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     logger.debug(f"[{current_time}] Reference existence validation completed: {len(errors)} errors found")
-    
-
-        # Log completion timestamp at end of operation
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
     return errors
 
 

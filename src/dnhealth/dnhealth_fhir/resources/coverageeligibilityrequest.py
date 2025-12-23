@@ -46,7 +46,10 @@ class CoverageEligibilityRequestInsurance:
     """
     
     focal: Optional[bool] = None  # Applicable coverage
-    coverage: Reference  # Insurance information (required)
+    # Note: coverage is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (focal has default value).
+    # Validation should enforce coverage is provided.
+    coverage: Optional[Reference] = None  # Insurance information (required in FHIR)
     businessArrangement: Optional[str] = None  # Additional provider contract number
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
@@ -101,25 +104,35 @@ class CoverageEligibilityRequest(DomainResource):
     # Identifier
     identifier: List[Identifier] = field(default_factory=list)  # Business Identifier for coverage eligiblity request
     # Status
-    status: str  # active | cancelled | draft | entered-in-error (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (identifier has default value).
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # active | cancelled | draft | entered-in-error (required in FHIR)
     # Priority
     priority: Optional[CodeableConcept] = None  # Desired processing priority
     # Purpose
     purpose: List[str] = field(default_factory=list)  # auth-requirements | benefits | discovery | validation
     # Patient
-    patient: Reference  # The recipient of the products and services (required)
+    # Note: patient is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (purpose has default value).
+    # Validation should enforce patient is provided.
+    patient: Optional[Reference] = None  # The recipient of the products and services (required in FHIR)
     # Serviced Date
     servicedDate: Optional[str] = None  # Estimated date or dates of service
     # Serviced Period
     servicedPeriod: Optional[Period] = None  # Estimated date or dates of service
     # Created
-    created: str  # Creation date (required)
+    # Note: created is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce created is provided.
+    created: Optional[str] = None  # Creation date (required)
     # Enterer
     enterer: Optional[Reference] = None  # Author
     # Provider
     provider: Optional[Reference] = None  # Responsible practitioner
     # Insurer
-    insurer: Reference  # Coverage issuer (required)
+    # Note: insurer is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce insurer is provided.
+    insurer: Optional[Reference] = None  # Coverage issuer (required)
     # Facility
     facility: Optional[Reference] = None  # Servicing facility
     # Supporting Info

@@ -35,7 +35,9 @@ class AppointmentParticipant:
     type: List[CodeableConcept] = field(default_factory=list)
     actor: Optional[Reference] = None
     required: Optional[str] = None  # required | optional | information-only
-    status: str  # accepted | declined | tentative | needs-action
+    # Note: status is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # accepted | declined | tentative | needs-action
     period: Optional[Period] = None
     extension: List[Extension] = field(default_factory=list)
 
@@ -53,7 +55,9 @@ class Appointment(FHIRResource):
     # Identifiers
     identifier: List[Identifier] = field(default_factory=list)
     # Status
-    status: str  # proposed | pending | booked | arrived | fulfilled | cancelled | noshow | entered-in-error | checked-in | waitlist
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # proposed | pending | booked | arrived | fulfilled | cancelled | noshow | entered-in-error | checked-in | waitlist (required in FHIR)
     # Cancelation reason
     cancelationReason: Optional[CodeableConcept] = None
     # Service category

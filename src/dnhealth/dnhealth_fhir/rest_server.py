@@ -29,6 +29,12 @@ from dnhealth.dnhealth_fhir.search import parse_search_string, SearchParameters
 from dnhealth.dnhealth_fhir.search_execution import execute_search
 from dnhealth.dnhealth_fhir.operations import get_operation, list_operations
 from dnhealth.dnhealth_fhir.subscription_engine import SubscriptionEngine
+from dnhealth.dnhealth_fhir.version import (
+    FHIRVersion,
+    normalize_version,
+    get_version_string,
+    detect_version_from_json_string
+)
 from dnhealth.util.logging import get_logger
 
 logger = get_logger(__name__)
@@ -49,13 +55,21 @@ except ImportError:
 
 class FHIRRestServer:
     """
-    FHIR R4 REST API Server.
+    FHIR REST API Server (version-aware, supports R4 and R5).
     
-    Provides RESTful endpoints for FHIR resources following FHIR R4 specification.
+    Provides RESTful endpoints for FHIR resources following FHIR R4 and R5 specifications.
+    Version detection is automatic from request parameters, headers, or resource content.
+    Defaults to R4 for backward compatibility.
     All operations include timestamps in logs.
     """
     
-    def __init__(self, storage: Optional[ResourceStorage] = None, base_path: str = "/fhir", subscription_engine: Optional[SubscriptionEngine] = None):
+    def __init__(
+        self,
+        storage: Optional[ResourceStorage] = None,
+        base_path: str = "/fhir",
+        subscription_engine: Optional[SubscriptionEngine] = None,
+        default_version: Optional[str] = None
+    ):
         """
         Initialize the REST API server.
         
@@ -63,6 +77,7 @@ class FHIRRestServer:
             storage: Optional ResourceStorage instance (creates new if not provided)
             base_path: Base path for FHIR endpoints (default: "/fhir")
             subscription_engine: Optional SubscriptionEngine instance (creates new if not provided)
+            default_version: Default FHIR version (defaults to R4 for backward compatibility)
         """
         if not FLASK_AVAILABLE:
             raise ImportError(
@@ -73,6 +88,7 @@ class FHIRRestServer:
         self.storage = storage or ResourceStorage()
         self.base_path = base_path.rstrip("/")
         self.subscription_engine = subscription_engine or SubscriptionEngine(storage=self.storage)
+        self.default_version = normalize_version(default_version)
         self.app = Flask(__name__)
         self._setup_routes()
         self._setup_error_handlers()
@@ -81,7 +97,10 @@ class FHIRRestServer:
         self.subscription_engine.start()
         
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"[{current_time}] FHIR REST API Server initialized (base_path: {self.base_path})")
+        logger.info(
+            f"[{current_time}] FHIR REST API Server initialized "
+            f"(base_path: {self.base_path}, default_version: {get_version_string(self.default_version)})"
+        )
     
     def _setup_routes(self):
         """Set up all REST API routes."""
@@ -200,14 +219,39 @@ class FHIRRestServer:
             methods=["GET", "POST"]
         )
     
+    def _detect_version_from_request(self) -> FHIRVersion:
+        """
+        Detect FHIR version from request parameters or headers.
+        
+        Checks in order:
+        1. fhirVersion query parameter
+        2. fhirVersion header
+        3. Default version (R4 for backward compatibility)
+        
+        Returns:
+            Detected FHIR version
+        """
+        # Check query parameter
+        if request and hasattr(request, 'args'):
+            fhir_version_param = request.args.get('fhirVersion')
+            if fhir_version_param:
+                return normalize_version(fhir_version_param)
+        
+        # Check header
+        if request and hasattr(request, 'headers'):
+            fhir_version_header = request.headers.get('fhirVersion') or request.headers.get('X-FHIR-Version')
+            if fhir_version_header:
+                return normalize_version(fhir_version_header)
+        
+        # Default to configured default (R4 for backward compatibility)
+        return self.default_version
+    
     def _setup_error_handlers(self):
         """Set up error handlers."""
         @self.app.errorhandler(404)
         def not_found(error):
 
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
             return self._create_error_response(
                 404,
                 "not-found",
@@ -218,8 +262,6 @@ class FHIRRestServer:
         def bad_request(error):
 
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
             return self._create_error_response(
                 400,
                 "invalid",
@@ -230,8 +272,6 @@ class FHIRRestServer:
         def internal_error(error):
 
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
             return self._create_error_response(
                 500,
                 "exception",
@@ -268,7 +308,6 @@ class FHIRRestServer:
         
         try:
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
             return json.loads(request.data.decode('utf-8'))
@@ -1421,6 +1460,7 @@ class FHIRRestServer:
         
         Returns a comprehensive CapabilityStatement that accurately describes
         all server capabilities including supported resources, operations, and features.
+        Version-aware: detects version from request and returns appropriate CapabilityStatement.
         """
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"[{current_time}] Getting metadata")
@@ -1434,6 +1474,10 @@ class FHIRRestServer:
                 CapabilityStatementRestResource
             )
             
+            # Detect version from request (defaults to R4 for backward compatibility)
+            detected_version = self._detect_version_from_request()
+            version_string = get_version_string(detected_version)
+            
             # Get all resource types from storage
             resource_types = self.storage.list_resource_types() if hasattr(self.storage, 'list_resource_types') else []
             
@@ -1441,13 +1485,20 @@ class FHIRRestServer:
             capability = CapabilityStatement()
             capability.status = "active"
             capability.kind = "instance"
-            capability.fhirVersion = "4.0.1"
+            # Set version based on detected version (R4 or R5)
+            if detected_version == FHIRVersion.R5:
+                capability.fhirVersion = "5.0.0"
+                capability.title = "DNHealth FHIR R5 Server Capability Statement"
+                capability.description = "FHIR R5 REST API server with comprehensive resource support, search, history, compartments, batch/transaction, and operations"
+            else:
+                # Default to R4 for backward compatibility
+                capability.fhirVersion = "4.0.1"
+                capability.title = "DNHealth FHIR R4 Server Capability Statement"
+                capability.description = "FHIR R4 REST API server with comprehensive resource support, search, history, compartments, batch/transaction, and operations"
             capability.format = ["json", "xml"]
             capability.patchFormat = ["application/json-patch+json"]
             capability.date = datetime.now().isoformat()
             capability.name = "DNHealth FHIR Server"
-            capability.title = "DNHealth FHIR R4 Server Capability Statement"
-            capability.description = "FHIR R4 REST API server with comprehensive resource support, search, history, compartments, batch/transaction, and operations"
             
             # Software information
             capability.software = CapabilityStatementSoftware(
@@ -1884,7 +1935,6 @@ def create_app(storage: Optional[ResourceStorage] = None, base_path: str = "/fhi
     """
     server = FHIRRestServer(storage=storage, base_path=base_path)
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     return server.app

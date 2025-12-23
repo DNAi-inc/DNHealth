@@ -68,13 +68,18 @@ class RiskAssessment(DomainResource):
     # Parent
     parent: Optional[Reference] = None  # Part of this occurrence
     # Status
-    status: str  # registered | preliminary | final | amended | corrected | cancelled | entered-in-error | unknown (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (identifier has default value).
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # registered | preliminary | final | amended | corrected | cancelled | entered-in-error | unknown (required in FHIR)
     # Method
     method: Optional[CodeableConcept] = None  # Evaluation mechanism
     # Code
     code: Optional[CodeableConcept] = None  # Type of assessment
     # Subject
-    subject: Reference  # Who/what does assessment apply to (required)
+    # Note: subject is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce subject is provided.
+    subject: Optional[Reference] = None  # Who/what does assessment apply to (required)
     # Encounter
     encounter: Optional[Reference] = None  # Where was assessment performed
     # Occurrence DateTime

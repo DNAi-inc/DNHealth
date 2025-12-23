@@ -31,7 +31,9 @@ class ImagingStudySeriesPerformer:
     """
     
     function: Optional[CodeableConcept] = None  # Type of performance
-    actor: Reference  # Who performed the series (required)
+    # Note: actor is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce actor is provided.
+    actor: Optional[Reference] = None  # Who performed the series (required)
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
 
@@ -44,8 +46,12 @@ class ImagingStudySeriesInstance:
     A single SOP instance within the series.
     """
     
-    uid: str  # DICOM SOP Instance UID (required)
-    sopClass: Coding  # DICOM class type (required)
+    # Note: uid is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce uid is provided.
+    uid: Optional[str] = None  # DICOM SOP Instance UID (required)
+    # Note: sopClass is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce sopClass is provided.
+    sopClass: Optional[Coding] = None  # DICOM class type (required)
     number: Optional[int] = None  # The number of this instance in the series
     title: Optional[str] = None  # Description of instance
     extension: List[Extension] = field(default_factory=list)
@@ -60,9 +66,13 @@ class ImagingStudySeries:
     Each series has one or more instances of the study.
     """
     
-    uid: str  # DICOM Series Instance UID for the series (required)
+    # Note: uid is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce uid is provided.
+    uid: Optional[str] = None  # DICOM Series Instance UID for the series (required)
     number: Optional[int] = None  # Numeric identifier of this series
-    modality: Coding  # The modality used for this series (required)
+    # Note: modality is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce modality is provided.
+    modality: Optional[Coding] = None  # The modality used for this series (required)
     description: Optional[str] = None  # A human-friendly description of the series
     numberOfInstances: Optional[int] = None  # Number of Series Related Instances
     endpoint: List[Reference] = field(default_factory=list)  # Series access endpoint
@@ -89,11 +99,15 @@ class ImagingStudy(DomainResource):
     # Identifier
     identifier: List[Identifier] = field(default_factory=list)  # Identifiers for the whole study
     # Status
-    status: str  # registered | available | cancelled | entered-in-error | unknown (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # registered | available | cancelled | entered-in-error | unknown (required in FHIR)
     # Modality
     modality: List[Coding] = field(default_factory=list)  # All series modality if actual acquisition modalities
     # Subject
-    subject: Reference  # Who or what is the subject of the imaging study (required)
+    # Note: subject is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce subject is provided.
+    subject: Optional[Reference] = None  # Who or what is the subject of the imaging study (required)
     # Encounter
     encounter: Optional[Reference] = None  # Encounter with which this imaging study is associated
     # Started

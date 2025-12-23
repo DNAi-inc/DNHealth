@@ -62,7 +62,6 @@ def resolve_contained_reference(
                     return nested_result
     
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     return None
@@ -265,7 +264,6 @@ def validate_contained_resources(resource: DomainResource) -> List[str]:
                 validate_contained_recursive(contained.contained, nested_path)
     
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     # Validate top-level contained resources (recursively)
@@ -306,7 +304,6 @@ def get_contained_resource_by_id(
     for contained in resource.contained:
         if isinstance(contained, FHIRResource) and hasattr(contained, "id"):
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
             if contained.id == resource_id:
@@ -339,8 +336,6 @@ def add_contained_resource(
     
 
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
     if not hasattr(resource, "contained"):
         resource.contained = []
     
@@ -367,8 +362,6 @@ def remove_contained_resource(
     """
 
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
     if not hasattr(resource, "contained") or not resource.contained:
         return False
     

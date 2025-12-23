@@ -79,10 +79,6 @@ def parse_array_extensions(
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     logger.debug(f"[{current_time}] Array extensions parsing completed: {len(extensions)} extensions found for field '{field_name}'")
     
-
-        # Log completion timestamp at end of operation
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
     return extensions if extensions else None
 
 
@@ -132,7 +128,6 @@ def serialize_array_extensions(
         
         result = "".join(xml_parts)
         
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.debug(f"[{current_time}] Array extensions serialization completed: {len(extensions)} extensions serialized for field '{field_name}' in {format} format")
         

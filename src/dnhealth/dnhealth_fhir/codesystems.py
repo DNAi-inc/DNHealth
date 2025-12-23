@@ -82,10 +82,6 @@ CODE_SYSTEMS: Dict[str, Set[str]] = {
 }
 
 
-
-    # Log completion timestamp at end of operation
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    logger.info(f"Current Time at End of Operations: {current_time}")
 def get_code_system(system_url: str) -> Optional[Set[str]]:
     """
     Get a code system by URL.
@@ -133,7 +129,6 @@ def is_code_in_code_system(code: str, system_url: str) -> bool:
     if len(code_system) == 0:
         return True
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     
@@ -172,7 +167,6 @@ def validate_coding_code_system(coding: Coding) -> List[str]:
             f"Code '{coding.code}' is not valid in code system '{coding.system}'"
         )
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     

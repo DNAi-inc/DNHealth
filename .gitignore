@@ -53,12 +53,14 @@ coverage.xml
 
 # Tests folder
 tests/
+.test/
 
 # Project specific
 *.pyc
 *.pyo
 *.pyd
 .cache/
+.dnai/
 
 # Documentation
 docs/

@@ -109,27 +109,39 @@ class CoverageEligibilityResponse(DomainResource):
     # Identifier
     identifier: List[Identifier] = field(default_factory=list)  # Business Identifier for coverage eligiblity response
     # Status
-    status: str  # active | cancelled | draft | entered-in-error (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # active | cancelled | draft | entered-in-error (required in FHIR)
     # Purpose
     purpose: List[str] = field(default_factory=list)  # auth-requirements | benefits | discovery | validation
     # Patient
-    patient: Reference  # The recipient of the products and services (required)
+    # Note: patient is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce patient is provided.
+    patient: Optional[Reference] = None  # The recipient of the products and services (required)
     # Serviced Date
     servicedDate: Optional[str] = None  # Estimated date or dates of service
     # Serviced Period
     servicedPeriod: Optional[Period] = None  # Estimated date or dates of service
     # Created
-    created: str  # Response creation date (required)
+    # Note: created is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce created is provided.
+    created: Optional[str] = None  # Response creation date (required)
     # Requestor
     requestor: Optional[Reference] = None  # Party responsible for the request
     # Request
-    request: Reference  # Eligibility request reference (required)
+    # Note: request is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce request is provided.
+    request: Optional[Reference] = None  # Eligibility request reference (required)
     # Outcome
-    outcome: str  # queued | complete | error | partial (required)
+    # Note: outcome is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce outcome is provided.
+    outcome: Optional[str] = None  # queued | complete | error | partial (required)
     # Disposition
     disposition: Optional[str] = None  # Disposition Message
     # Insurer
-    insurer: Reference  # Coverage issuer (required)
+    # Note: insurer is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce insurer is provided.
+    insurer: Optional[Reference] = None  # Coverage issuer (required)
     # Insurance
     insurance: List[CoverageEligibilityResponseInsurance] = field(default_factory=list)  # Patient insurance information
     # Pre Auth Ref

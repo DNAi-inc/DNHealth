@@ -42,25 +42,36 @@ class PaymentNotice(DomainResource):
     # Identifier
     identifier: List[Identifier] = field(default_factory=list)  # Business Identifier for the payment notice
     # Status
-    status: str  # active | cancelled | draft | entered-in-error (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # field ordering compatibility (identifier has default value).
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # active | cancelled | draft | entered-in-error (required in FHIR)
     # Request
     request: Optional[Reference] = None  # Request reference
     # Response
     response: Optional[Reference] = None  # Response reference
     # Created
-    created: str  # Creation date (required)
+    # Note: created is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce created is provided.
+    created: Optional[str] = None  # Creation date (required)
     # Provider
     provider: Optional[Reference] = None  # Responsible practitioner
     # Payment
-    payment: Reference  # Payment reference (required)
+    # Note: payment is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce payment is provided.
+    payment: Optional[Reference] = None  # Payment reference (required)
     # Payment Date
     paymentDate: Optional[str] = None  # Payment date
     # Payee
     payee: Optional[Reference] = None  # Party being paid
     # Recipient
-    recipient: Reference  # Party receiving notification (required)
+    # Note: recipient is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce recipient is provided.
+    recipient: Optional[Reference] = None  # Party receiving notification (required)
     # Amount
-    amount: Money  # Monetary amount of the payment (required)
+    # Note: amount is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce amount is provided.
+    amount: Optional[Money] = None  # Monetary amount of the payment (required)
     # Payment Status
     paymentStatus: Optional[CodeableConcept] = None  # Issued or cleared status of the payment
 

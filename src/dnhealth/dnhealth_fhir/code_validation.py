@@ -66,7 +66,6 @@ def validate_code_against_valueset(
         return True, None
     
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     return False, f"Code '{code}' is not in ValueSet '{valueset.url or 'unknown'}'"
@@ -90,7 +89,6 @@ def validate_coding_against_valueset(
         return False, "Coding.code is empty"
     
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     return validate_code_against_valueset(
@@ -123,10 +121,6 @@ def validate_codeable_concept_against_valueset(
     for coding in concept.coding:
         is_valid, error = validate_coding_against_valueset(coding, valueset)
         if is_valid:
-
-        # Log completion timestamp at end of operation
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
             return True, None
         if error:
             errors.append(error)
@@ -153,10 +147,6 @@ def validate_code_against_codesystem(
         Tuple of (is_valid, error_message)
     """
     if not code:
-
-            # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
         return False, "Code is empty"
     
     # Verify system matches if provided
@@ -180,7 +170,6 @@ def validate_coding_against_codesystem(
     """
     Validate a Coding against a CodeSystem resource.
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
     
@@ -214,7 +203,6 @@ def validate_codeable_concept_against_codesystem(
         concept: CodeableConcept to validate
         codesystem: CodeSystem resource
 
-        # Log completion timestamp at end of operation
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         logger.info(f"Current Time at End of Operations: {current_time}")
         

@@ -9,7 +9,7 @@ See the LICENSE files in the project root for details.
 
 # DNHealth
 
-A production-grade, pure-Python library suite for healthcare integration standards: **HL7 v2.x**, **HL7 v3**, and **FHIR R4**.
+A production-grade, pure-Python library suite for healthcare integration standards: **HL7 v2.x**, **HL7 v3**, **FHIR R4**, and **FHIR R5**.
 
 ## Overview
 
@@ -18,6 +18,7 @@ DNHealth provides complete read/write support for the three major healthcare mes
 - **HL7 v2.x**: Parse and serialize ER7 ("pipe-delimited") messages with full support for segments, fields, components, subcomponents, repetitions, and escape sequences.
 - **HL7 v3**: Parse and serialize HL7 v3 XML messages with namespace support and full structural preservation.
 - **FHIR R4**: Parse and serialize FHIR resources in both JSON and XML formats, with support for primitive types, complex types, and full resource structures.
+- **FHIR R5**: Full support for FHIR R5 resources with version-aware parsing, serialization, and automatic version detection. Seamless coexistence with R4 resources.
 
 ## Features
 
@@ -60,6 +61,21 @@ DNHealth provides complete read/write support for the three major healthcare mes
 - **Infrastructure Classes**: Complete infrastructure layer support
 - **Transmission Wrapper**: MCCI message transmission wrapper support
 - **Specification Compliance**: Official validation against HL7v3 specifications
+
+### FHIR R5 Comprehensive Features
+- **162+ Resources**: Complete FHIR R5 resource coverage including:
+  - All R4 resources with R5 enhancements
+  - New R5 resources (EvidenceReport, GenomicStudy, Citation, etc.)
+  - Enhanced resources with new elements and capabilities
+- **Version-Aware Infrastructure**: Automatic version detection and routing
+- **Dual Format Support**: Full JSON and XML parsing/serialization for R5 resources
+- **Backward Compatibility**: Seamless coexistence with R4 resources
+- **R5-Specific Operations**: Support for R5-specific FHIR operations
+- **R5 Profile Validation**: Validate resources against R5 StructureDefinition profiles
+- **R5 Terminology Services**: Enhanced terminology operations for R5
+- **R5 REST API**: Full FHIR R5 REST API implementation
+- **R5 FHIRPath**: Complete FHIRPath expression evaluation for R5 resources
+- **Specification Compliance**: Official validation against FHIR R5 specifications
 
 ### FHIR R4 Comprehensive Features
 - **145+ Resources**: Complete FHIR R4 resource coverage including:
@@ -145,15 +161,7 @@ DNHealth provides complete read/write support for the three major healthcare mes
 
 ## Installation
 
-```bash
-pip install dnhealth
-```
-
-For XML support (recommended for HL7v3 and FHIR XML):
-
-```bash
-pip install dnhealth[xml]
-```
+Please refer to the project documentation for installation instructions.
 
 ## Quick Start
 
@@ -267,7 +275,7 @@ hl7v3tool validate message.xml
 ### fhirtool
 
 ```bash
-# Pretty-print FHIR JSON
+# Pretty-print FHIR JSON (auto-detects R4 or R5)
 fhirtool pretty patient.json
 
 # Validate FHIR resource
@@ -278,6 +286,15 @@ fhirtool to-xml patient.json
 
 # Convert XML to JSON
 fhirtool to-json patient.xml
+
+# Explicitly specify FHIR R5 version
+fhirtool pretty r5-resource.json --fhir-version R5
+
+# Validate R5 resource with explicit version
+fhirtool validate r5-task.json --fhir-version R5
+
+# Convert R5 JSON to XML
+fhirtool to-xml r5-resource.json --fhir-version R5
 ```
 
 
@@ -405,68 +422,94 @@ result = evaluate_fhirpath(observation, "valueQuantity.value > 100")
 ## Current Coverage
 
 ### HL7 v2.x (~95% Complete)
-- ✅ Complete ER7 parsing and serialization
-- ✅ All structural elements (segments, fields, components, subcomponents, repetitions)
-- ✅ Escape sequence handling
-- ✅ Multiple version support (2.3 through 2.9.1)
-- ✅ 500+ table definitions with official HL7 codes
-- ✅ 181+ segment field definitions
-- ✅ Message validation and structural checking
-- ✅ Batch message processing
-- ✅ ACK generation and processing
-- ✅ JSON codec
-- ✅ Streaming parser for large files
-- ✅ Message correlation and tracking
-- ✅ Query message support
-- ✅ FTP integration
-- ✅ Parallel processing
-- ✅ Message diffing and merging
-- ✅ Implementation guide support
-- ✅ Profile support
-- ✅ Official specification compliance validation
+-  Complete ER7 parsing and serialization
+-  All structural elements (segments, fields, components, subcomponents, repetitions)
+-  Escape sequence handling
+-  Multiple version support (2.3 through 2.9.1)
+-  500+ table definitions with official HL7 codes
+-  181+ segment field definitions
+-  Message validation and structural checking
+-  Batch message processing
+-  ACK generation and processing
+-  JSON codec
+-  Streaming parser for large files
+-  Message correlation and tracking
+-  Query message support
+-  FTP integration
+-  Parallel processing
+-  Message diffing and merging
+-  Implementation guide support
+-  Profile support
+-  Official specification compliance validation
 
 ### HL7 v3 (~90% Complete)
-- ✅ XML parsing and serialization
-- ✅ Namespace support
-- ✅ Full structural preservation
-- ✅ RIM (Reference Information Model) classes
-- ✅ 30+ data types
-- ✅ 54+ interaction patterns
-- ✅ Message control wrappers
-- ✅ XPath navigation
-- ✅ Schema validation
-- ✅ Infrastructure classes
-- ✅ Transmission wrappers
-- ✅ Official specification compliance validation
+-  XML parsing and serialization
+-  Namespace support
+-  Full structural preservation
+-  RIM (Reference Information Model) classes
+-  30+ data types
+-  54+ interaction patterns
+-  Message control wrappers
+-  XPath navigation
+-  Schema validation
+-  Infrastructure classes
+-  Transmission wrappers
+-  Official specification compliance validation
+
+### FHIR R5 (~95% Complete)
+-  **162+ Resources**: Complete FHIR R5 resource coverage
+-  JSON and XML parsing/serialization
+-  Version-aware parsing with automatic detection
+-  All primitive and complex types
+-  Comprehensive validation framework
+-  FHIR operations (R5-specific operations)
+-  REST API server implementation
+-  FHIRPath expression evaluation
+-  Profile validation
+-  Terminology services
+-  Extensions and custom extensions
+-  Contained resources
+-  Reference validation
+-  Polymorphic types
+-  Narrative generation
+-  Document generation
+-  Messaging support
+-  GraphQL support
+-  Search parameters
+-  Compartments
+-  Conditional operations
+-  Lazy loading
+-  Backward compatibility with R4
+-  Official specification compliance validation
 
 ### FHIR R4 (~98% Complete)
-- ✅ **145+ Resources**: Complete FHIR R4 resource coverage
-- ✅ JSON and XML parsing/serialization
-- ✅ All primitive and complex types
-- ✅ Comprehensive validation framework
-- ✅ FHIR operations (11+ standard operations)
-- ✅ REST API server implementation
-- ✅ FHIRPath expression evaluation
-- ✅ Profile validation
-- ✅ Terminology services (CodeSystem, ValueSet, ConceptMap)
-- ✅ Extensions and custom extensions
-- ✅ Contained resources
-- ✅ Reference validation
-- ✅ Polymorphic types
-- ✅ Narrative generation
-- ✅ Document generation
-- ✅ Messaging support
-- ✅ GraphQL support
-- ✅ Search parameters
-- ✅ Compartments
-- ✅ Conditional operations
-- ✅ Lazy loading
-- ✅ Official specification compliance validation
+-  **145+ Resources**: Complete FHIR R4 resource coverage
+-  JSON and XML parsing/serialization
+-  All primitive and complex types
+-  Comprehensive validation framework
+-  FHIR operations (11+ standard operations)
+-  REST API server implementation
+-  FHIRPath expression evaluation
+-  Profile validation
+-  Terminology services (CodeSystem, ValueSet, ConceptMap)
+-  Extensions and custom extensions
+-  Contained resources
+-  Reference validation
+-  Polymorphic types
+-  Narrative generation
+-  Document generation
+-  Messaging support
+-  GraphQL support
+-  Search parameters
+-  Compartments
+-  Conditional operations
+-  Lazy loading
+-  Official specification compliance validation
 
 ### Cross-Standard Mapping
-- ✅ HL7v2 ↔ FHIR bidirectional conversion
-- ✅ HL7v3 ↔ FHIR bidirectional conversion
-- ✅ Configurable mapping rules
+-  HL7v2 ↔ FHIR bidirectional conversion
+-  HL7v3 ↔ FHIR bidirectional conversion
+-  Configurable mapping rules
 
 ## Architecture
 
@@ -490,11 +533,25 @@ dnhealth/
 │   ├── datatypes.py     # Data types
 │   ├── interactions.py  # Interaction patterns
 │   └── ...
-├── dnhealth_fhir/       # FHIR R4 support
-│   ├── resources/       # 145+ resource definitions
-│   ├── parser_json.py   # JSON parsing
-│   ├── parser_xml.py    # XML parsing
-│   ├── validation.py    # Validation framework
+├── dnhealth_fhir/       # FHIR R4 & R5 support
+│   ├── resources/       # 145+ R4 resource definitions
+│   ├── r5/              # R5 support
+│   │   ├── resources/   # 162+ R5 resource definitions
+│   │   ├── base.py      # R5 base classes
+│   │   └── types.py     # R5 types
+│   ├── r5_generator/    # R5 code generator
+│   │   ├── profile_parser.py
+│   │   ├── element_analyzer.py
+│   │   ├── type_mapper.py
+│   │   ├── code_generator.py
+│   │   └── resource_generator.py
+│   ├── parser_json.py   # Version-aware JSON parsing
+│   ├── parser_xml.py    # Version-aware XML parsing
+│   ├── serializer_json.py  # Version-aware JSON serialization
+│   ├── serializer_xml.py   # Version-aware XML serialization
+│   ├── version.py        # Version detection and routing
+│   ├── resource_registry.py  # Version-aware resource registry
+│   ├── validation.py    # Version-aware validation framework
 │   ├── operations.py    # FHIR operations
 │   ├── rest_server.py   # REST API server
 │   ├── fhirpath.py      # FHIRPath evaluation
@@ -528,6 +585,7 @@ Comprehensive documentation is available:
   - [HL7v2 User Guide](docs/user_guides/HL7V2_USER_GUIDE.md)
   - [HL7v3 User Guide](docs/user_guides/HL7V3_USER_GUIDE.md)
   - [FHIR R4 User Guide](docs/user_guides/FHIR_R4_USER_GUIDE.md)
+  - [FHIR R5 User Guide](docs/user_guides/FHIR_R5_USER_GUIDE.md)
   - [Getting Started](docs/user_guides/GETTING_STARTED.md)
   - [Migration Guide](docs/user_guides/MIGRATION_GUIDE.md)
 

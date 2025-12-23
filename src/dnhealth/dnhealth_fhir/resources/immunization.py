@@ -31,7 +31,9 @@ class ImmunizationPerformer:
     """
     
     function: Optional[CodeableConcept] = None  # What type of performance was done
-    actor: Reference  # Individual or organization who was performing (required)
+    # Note: actor is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce actor is provided.
+    actor: Optional[Reference] = None  # Individual or organization who was performing (required)
     extension: List[Extension] = field(default_factory=list)
     modifierExtension: List[Extension] = field(default_factory=list)
 
@@ -99,13 +101,19 @@ class Immunization(DomainResource):
     # Identifier
     identifier: List[Identifier] = field(default_factory=list)  # Business identifier
     # Status
-    status: str  # completed | entered-in-error | not-done (required)
+    # Note: status is required in FHIR, but made Optional here for Python dataclass
+    # Validation should enforce status is provided.
+    status: Optional[str] = None  # completed | entered-in-error | not-done (required in FHIR)
     # Status Reason
     statusReason: Optional[CodeableConcept] = None  # Reason not done
     # Vaccine Code
-    vaccineCode: CodeableConcept  # Vaccine product administered (required)
+    # Note: vaccineCode is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce vaccineCode is provided.
+    vaccineCode: Optional[CodeableConcept] = None  # Vaccine product administered (required)
     # Patient
-    patient: Reference  # Who was immunized (required)
+    # Note: patient is required in FHIR, but made Optional here for Python dataclass field ordering compatibility
+    # Validation should enforce patient is provided.
+    patient: Optional[Reference] = None  # Who was immunized (required)
     # Encounter
     encounter: Optional[Reference] = None  # Encounter immunization was part of
     # Occurrence DateTime

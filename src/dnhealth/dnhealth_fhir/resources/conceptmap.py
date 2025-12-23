@@ -175,12 +175,12 @@ def translate_code(
     Translate a code using a ConceptMap.
     
     Args:
-        concept_map: ConceptMap resource
-        source_code: Source code to translate
-        source_system: Optional source code system URL (if None, uses first group's source)
-        target_system: Optional target code system URL (if None, uses first group's target)
+        concept_map: Optional[ConceptMap resource] = None
+        source_code: Optional[Source code to translate] = None
+        source_system: Optional[Optional source code system URL (if None, uses first group's source)] = None
+        target_system: Optional[Optional target code system URL (if None, uses first group's target)] = None
         
-    Returns:
+    Returns: Optional[] = None
         List of tuples (target_code, target_system, equivalence) for each mapping found
     """
     translations = []

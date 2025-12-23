@@ -27,9 +27,7 @@ from dnhealth.dnhealth_fhir.codesystem_resource import CodeSystem, get_codes_fro
 def expand_valueset(
     valueset: ValueSet,
     codesystems: Optional[Dict[str, CodeSystem]] = None,
-    nested_valuesets: Optional[Dict[str, ValueSet]] = None,# Log completion timestamp
-current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-logger.info(f"Current Time at End of Operations: {current_time}")
+    nested_valuesets: Optional[Dict[str, ValueSet]] = None,
     include_designations: bool = False
 ) -> ValueSetExpansion:
     """
@@ -177,10 +175,6 @@ def _expand_include(
                                 code_details,
                                 include.system,
                                 include_designations
-
-                                    # Log completion timestamp at end of operation
-                                    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                                    logger.info(f"Current Time at End of Operations: {current_time}")
                             )
 
 
@@ -434,10 +428,6 @@ def _is_code_in_descendants(concept: "CodeSystemConcept", target_code: str) -> b
             return True
         # Recursively check descendants
         if _is_code_in_descendants(nested_concept, target_code):
-
-                # Log completion timestamp at end of operation
-                current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                logger.info(f"Current Time at End of Operations: {current_time}")
             return True
     
 
@@ -469,18 +459,10 @@ def get_expanded_codes(
     codes = set()
     for contains in expansion.contains:
         if contains.code:
-
-        # Log completion timestamp at end of operation
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
             codes.add(contains.code)
         # Handle nested contains
         if contains.contains:
             for nested in contains.contains:
-
-        # Log completion timestamp
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        logger.info(f"Current Time at End of Operations: {current_time}")
                 if nested.code:
                     codes.add(nested.code)
     return codes
@@ -502,15 +484,7 @@ def expand_valueset_to_expansion(
     Returns:
         ValueSet with expansion added
     """
-
-            # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
     from copy import deepcopy
-import logging
-    
-
-logger = logging.getLogger(__name__)
     expanded = deepcopy(valueset)
     expansion = expand_valueset(
         valueset,
@@ -539,8 +513,6 @@ def _add_nested_contains(
         include_designations: Whether to include designations
 
             # Log completion timestamp at end of operation
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            logger.info(f"Current Time at End of Operations: {current_time}")
     """
     for contains_item in contains_list:
         if contains_item.code:
